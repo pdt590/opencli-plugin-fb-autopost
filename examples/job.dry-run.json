@@ -1,0 +1,7 @@
+{
+  "mode": "dry-run",
+  "groupAlias": "main",
+  "caption": "Test draft only. Do not publish.",
+  "images": [],
+  "screenshotDir": "../artifacts/facebook-group-post"
+}

@@ -1,0 +1,11 @@
+{
+  "artifactsDir": "./artifacts/facebook-group-post",
+  "preferredBrowser": "Brave or Chrome with the OpenCLI Browser Bridge extension",
+  "opencliPluginInstall": "file://<this-repo-path>",
+  "safety": {
+    "dryRunDefault": true,
+    "liveRequiresConfirmTrue": true,
+    "storesCredentials": false,
+    "facebookLoginIsManual": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "groups": [
+    {
+      "alias": "test-group",
+      "label": "Approved Facebook test group",
+      "url": "https://www.facebook.com/groups/1234567890",
+      "approvedForPosting": true
+    }
+  ]
+}

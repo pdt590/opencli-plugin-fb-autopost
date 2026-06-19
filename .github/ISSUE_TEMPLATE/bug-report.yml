@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible plugin, worker, or messaging integration defect.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include tokens, credentials, cookies, private group URLs, phone numbers, or private screenshots.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - OpenCLI plugin
+        - Local worker
+        - Hermes Telegram
+        - Hermes WhatsApp
+        - WhatsApp Business
+        - Setup or doctor
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

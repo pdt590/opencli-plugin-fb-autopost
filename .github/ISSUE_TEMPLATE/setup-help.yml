@@ -1,0 +1,29 @@
+name: Setup help
+description: Request help with a non-secret installation or readiness problem.
+title: "[Setup]: "
+labels: ["setup"]
+body:
+  - type: markdown
+    attributes:
+      value: Never paste bot tokens, Meta secrets, Facebook credentials, cookies, or private group URLs.
+  - type: dropdown
+    id: step
+    attributes:
+      label: Blocked step
+      options:
+        - Node or npm
+        - OpenCLI installation
+        - Browser Bridge
+        - Facebook login
+        - Plugin installation
+        - Hermes skill installation
+        - Telegram gateway
+        - WhatsApp integration
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Redacted command output
+    validations:
+      required: true

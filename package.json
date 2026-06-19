@@ -1,0 +1,43 @@
+{
+  "name": "opencli-plugin-fb-autopost",
+  "version": "0.1.0",
+  "description": "OpenCLI plugin for preparing Facebook group posts with explicit-confirm publishing.",
+  "license": "Apache-2.0",
+  "author": "Ang Jing Kang",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thenotoriousmrkrabs/opencli-plugin-fb-autopost.git"
+  },
+  "homepage": "https://github.com/thenotoriousmrkrabs/opencli-plugin-fb-autopost#readme",
+  "bugs": {
+    "url": "https://github.com/thenotoriousmrkrabs/opencli-plugin-fb-autopost/issues"
+  },
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "doctor": "node scripts/doctor.js",
+    "worker:dry-run": "node worker/posting-worker.js --job examples/job.dry-run.json",
+    "worker:confirm": "node worker/posting-worker.js --job examples/job.live.json --confirm true",
+    "package": "node scripts/package-local.js",
+    "package:local": "node scripts/package-local.js",
+    "whatsapp-business": "node whatsapp-business/server.js",
+    "whatsapp-business:dry-run": "node whatsapp-business/server.js --dry-run",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "opencli",
+    "facebook",
+    "plugin",
+    "hermes",
+    "telegram",
+    "whatsapp"
+  ],
+  "devDependencies": {
+    "@jackwener/opencli": "1.8.3",
+    "vitest": "4.1.8"
+  }
+}
