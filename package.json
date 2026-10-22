@@ -21,23 +21,19 @@
     "worker:confirm": "node worker/posting-worker.js --job examples/job.live.json --confirm true",
     "package": "node scripts/package-local.js",
     "package:local": "node scripts/package-local.js",
-    "whatsapp-business": "node whatsapp-business/server.js",
-    "whatsapp-business:dry-run": "node whatsapp-business/server.js --dry-run",
     "test": "vitest run --config tests/vitest.config.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.20.0"
   },
   "keywords": [
     "opencli",
     "facebook",
     "plugin",
-    "hermes",
-    "telegram",
-    "whatsapp"
+    "hermes"
   ],
   "devDependencies": {
-    "@jackwener/opencli": "1.8.3",
+    "@jackwener/opencli": "2.0.0",
     "vitest": "4.1.8"
   }
 }

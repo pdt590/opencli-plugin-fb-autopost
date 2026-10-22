@@ -9,8 +9,6 @@ Security fixes are applied to the latest tagged release and `main`.
 Do not open a public issue containing:
 
 - access tokens
-- Telegram bot tokens
-- Meta App Secrets
 - Facebook credentials or cookies
 - private group URLs
 - personal phone numbers
@@ -22,8 +20,8 @@ Use GitHub private vulnerability reporting when enabled, or contact the reposito
 
 - Facebook credentials remain in the local browser profile.
 - Dry-run is the default.
-- Live mode requires explicit `POST` and worker `--confirm true`.
-- The worker processes one group per job.
+- Live mode requires a clear user request to publish and CLI/worker `--confirm true`; no literal confirmation keyword is required.
+- The worker processes one personal profile or group per job.
 - The project does not bypass login, checkpoint, CAPTCHA, 2FA, or blocked states.
 - The project does not include stealth, proxy, fingerprinting, or rate-limit evasion.
 - The project does not retry a failed or unknown live post.
@@ -33,7 +31,6 @@ Use GitHub private vulnerability reporting when enabled, or contact the reposito
 Keep all secrets outside Git:
 
 - Hermes secrets: `~/.hermes/.env`
-- WhatsApp Business secrets: a protected local environment file
 - local group configuration: `config/groups.json`
 
 Rotate any secret that is pasted into a public issue, commit, screenshot, or chat.

@@ -16,11 +16,10 @@ This project adds:
 - dry-run and explicit live confirmation gates
 - a one-job local worker
 - setup, doctor, packaging, and test tooling
-- a Hermes Telegram/WhatsApp skill
-- an optional WhatsApp Business interactive adapter
+- a unified Hermes Facebook posting skill
 
 Hermes Agent is developed by Nous Research and licensed under MIT:
 
 https://github.com/NousResearch/hermes-agent
 
-This project is not affiliated with or endorsed by OpenCLI, Jack Wener, Nous Research, Meta, Facebook, WhatsApp, Telegram, Brave, or Google.
+This project is not affiliated with or endorsed by OpenCLI, Jack Wener, Nous Research, Meta, Facebook, Brave, or Google.

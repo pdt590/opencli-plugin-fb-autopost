@@ -24,6 +24,7 @@ cli({
   defaultWindowMode: 'foreground',
   defaultFormat: 'json',
   args: [
+    { name: 'defer-close', type: 'boolean', default: false, help: 'Keep task tab after outcome checks; use with --site-session persistent for later cleanup' },
     { name: 'slow', type: 'boolean', default: false, help: 'Paced caption input and review pauses; no detection guarantees' },
     { name: 'group-url', type: 'string', required: true, help: 'Full Facebook group URL' },
     { name: 'caption', type: 'string', help: 'Caption text (exclusive with --caption-file)' },

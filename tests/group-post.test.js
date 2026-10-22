@@ -29,6 +29,7 @@ function makePage({ evaluate = [], evaluateWithArgs = [] } = {}) {
   const plainScripts = [];
   const argScripts = [];
   return {
+    newTab: vi.fn(async () => 'owned-group-tab'), selectTab: vi.fn(), closeTab: vi.fn(),
     goto: vi.fn().mockResolvedValue(undefined),
     evaluate: vi.fn(async (script) => {
       const source = String(script);
@@ -98,6 +99,8 @@ describe('groupPost flow', () => {
     });
     expect(page.insertText).toHaveBeenCalledWith('Test draft only. Do not publish.');
     expect(page.setFileInput).not.toHaveBeenCalled();
+    expect(page.screenshot).not.toHaveBeenCalled();
+    expect(rows[0].screenshot).toBeNull();
     expect(page.__argScripts[0]).toContain("getAttribute('aria-hidden') === 'true'");
     expect(page.__argScripts[0]).toContain('score(candidate.text)');
     expect(rows[0]).toMatchObject({
@@ -129,6 +132,7 @@ describe('groupPost flow', () => {
     const rows = await groupPost(page, baseArgs({ images: `${firstImage},${secondImage}` }));
 
     expect(page.setFileInput).toHaveBeenCalledWith([firstImage, secondImage], activeFileInputSelector());
+    expect(page.screenshot).not.toHaveBeenCalled();
     expect(rows[0]).toMatchObject({
       status: 'dry-run-ready',
       mode: 'dry-run',

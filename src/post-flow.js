@@ -11,7 +11,7 @@ import {
 } from './composer.js';
 import { attachImages } from './images.js';
 import { buildResult } from './result.js';
-import { readArg } from './validate.js';
+import { coerceBoolean, readArg } from './validate.js';
 
 export async function runPost(first, second, { resolveInput, verifyTarget, commandName, resultTarget }) {
   const { page, kwargs } = normalizeInvocation(first, second);
@@ -20,9 +20,45 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
   }
 
   const input = resolveInput(kwargs);
+  const deferClose = coerceBoolean(readArg(kwargs, 'defer-close', 'deferClose'));
   const timing = readArg(kwargs, '__timing') || {};
   ensureArtifactDir(input.screenshotDir);
 
+  if (![page.newTab, page.selectTab, page.closeTab].every(fn => typeof fn === 'function')) {
+    throw new CommandExecutionError('OpenCLI 2.x tab lifecycle support is required. Update OpenCLI before posting.');
+  }
+  let ownedTab;
+  let rows;
+  let failure;
+  let cleanupError;
+  try {
+    ownedTab = await page.newTab();
+    if (typeof ownedTab !== 'string' || !ownedTab) throw new CommandExecutionError('OpenCLI did not return the task tab identity');
+    await page.selectTab(ownedTab);
+    rows = await preparePost(page, input, timing, verifyTarget, resultTarget);
+  } catch (error) {
+    failure = error;
+    if (ownedTab) {
+      try {
+        const screenshot = await captureScreenshot(page, input.screenshotDir, 'task-error');
+        failure.message += ` Screenshot: ${screenshot}`;
+      } catch { /* Preserve the original failure if the browser is unavailable. */ }
+    }
+  } finally {
+    if (ownedTab && !deferClose) {
+      try { await page.closeTab(ownedTab); }
+      catch (error) { cleanupError = `Task tab cleanup failed: ${error.message}. Close that tab manually; do not repeat the post.`; }
+    }
+  }
+  if (failure) {
+    if (deferClose && ownedTab) failure.message += ` Task tab retained: ${ownedTab}. Verify it before cleanup.`;
+    if (cleanupError) failure.message += ` ${cleanupError}`;
+    throw failure;
+  }
+  return rows.map(row => ({ ...row, tab_closed: !deferClose && !cleanupError, ...(deferClose ? { task_tab: ownedTab, cleanup_deferred: true } : {}), ...(cleanupError ? { cleanup_warning: cleanupError } : {}) }));
+}
+
+async function preparePost(page, input, timing, verifyTarget, resultTarget) {
   await page.goto(input.targetUrl, { waitUntil: 'load', settleMs: 3000 });
   await assertSafePage(page, {
     screenshotDir: input.screenshotDir,
@@ -73,22 +109,22 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
   });
 
   if (input.mode === 'dry-run') {
-    const screenshot = await captureScreenshot(page, input.screenshotDir, 'dry-run');
     return [
       buildResult({
         status: 'dry-run-ready',
         mode: input.mode,
         [resultTarget]: resultUrl,
-        message: 'Composer is prepared and left open for human review. Post was not clicked.',
+        message: 'Composer inputs were verified without creating a preview image. Post was not clicked.',
         captionLength: input.caption.length,
         imageCount: input.images.length,
-        screenshot,
+        screenshot: null,
       }),
     ];
   }
 
   await clickPostButton(page, {
     screenshotDir: input.screenshotDir,
+    caption: input.caption,
   });
   const outcome = await pollPostOutcome(page, {
     timeoutMs: timing.postOutcomeTimeoutMs,
@@ -102,6 +138,8 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
       mode: input.mode,
       [resultTarget]: resultUrl,
       message: outcome.message,
+      evidence: outcome.evidence,
+      postUrl: outcome.post_url,
       captionLength: input.caption.length,
       imageCount: input.images.length,
       screenshot,

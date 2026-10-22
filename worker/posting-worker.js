@@ -14,6 +14,7 @@ import {
 import { resolveOpenCliCommand } from '../src/opencli-command.js';
 import { defaultRunCommand as runOpenCliCommand } from '../src/opencli-command.js';
 import { coerceBoolean } from '../src/validate.js';
+import { chooseProfile } from '../src/browser-session.js';
 
 const WORKER_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(WORKER_DIR, '..');
@@ -90,6 +91,7 @@ export async function runWorker({
     if (!opencli.ok) {
       throw new Error(`OpenCLI command not available.\n${opencli.recovery}`);
     }
+    normalized.profile = chooseProfile(normalized.profile, opencli.command, runCommand, repoRoot);
     const opencliArgs = buildOpenCliArgs(normalized);
     const opencliResult = runCommand(opencli.command, opencliArgs, { cwd: repoRoot });
     const result = buildWorkerResult({

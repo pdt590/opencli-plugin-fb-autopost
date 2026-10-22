@@ -458,6 +458,7 @@ function createOpenCliRunCommand(rows, { globalAvailable = true, localCommand = 
     if (localCommand && command === localCommand && args.join(' ') === '--version') {
       return { status: 0, output: 'opencli 1.0.0' };
     }
+    if (args.join(' ') === 'profile list') return { status: 0, output: JSON.stringify({ ok: true, data: { profiles: [{ contextId: 'default', connected: true }] } }) };
     if (args[0] === 'facebook' && args[1] === 'group-post') {
       return { status: 0, output: `${JSON.stringify(rows)}${outputSuffix}` };
     }

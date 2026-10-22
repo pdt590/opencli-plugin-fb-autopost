@@ -18,6 +18,7 @@ cli({
   domain: 'www.facebook.com', strategy: Strategy.UI, browser: true,
   defaultWindowMode: 'foreground', defaultFormat: 'json',
   args: [
+    { name: 'defer-close', type: 'boolean', default: false, help: 'Keep task tab after outcome checks; use with --site-session persistent for later cleanup' },
     { name: 'slow', type: 'boolean', default: false, help: 'Paced caption input and review pauses; no detection guarantees' },
     { name: 'caption', type: 'string', help: 'Caption text (exclusive with --caption-file)' },
     { name: 'caption-file', type: 'string', help: 'Path to UTF-8 caption file' },

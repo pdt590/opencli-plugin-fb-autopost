@@ -7,6 +7,8 @@ export function buildResult({
   captionLength,
   imageCount,
   screenshot,
+  evidence,
+  postUrl,
 }) {
   return {
     status,
@@ -16,5 +18,7 @@ export function buildResult({
     caption_length: captionLength,
     image_count: imageCount,
     screenshot,
+    ...(evidence ? { evidence } : {}),
+    ...(postUrl ? { post_url: postUrl } : {}),
   };
 }

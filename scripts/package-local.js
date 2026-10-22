@@ -90,7 +90,7 @@ export function packageLocal({ repoRoot = REPO_ROOT, outDir = DEFAULT_OUT_DIR, d
     nextSteps: [
       'Copy the archive to the local office/laptop machine.',
       'Extract it, then run: npm install',
-      'Continue with docs/first-run-checklist.md.',
+      'Continue with README.md.',
     ],
   };
 }
@@ -107,6 +107,7 @@ export function packageEntries() {
     'opencli-plugin.json',
     'group-post.js',
     'person-post.js',
+    'post-tabs.js',
     'src',
     'worker',
     'scripts',
@@ -114,7 +115,7 @@ export function packageEntries() {
     'docs',
     'config',
     'examples',
-    'hermes',
+    'skills',
     'artifacts/.gitkeep',
     'install.sh',
   ];

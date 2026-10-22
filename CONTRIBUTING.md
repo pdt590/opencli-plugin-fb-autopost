@@ -5,10 +5,10 @@
 Contributions should preserve the local-first architecture:
 
 - OpenCLI plugin remains the only Facebook browser automation engine.
-- Hermes and messaging adapters remain control layers.
+- The Hermes skill remains a control layer.
 - Dry-run remains the default.
 - Live posting requires explicit confirmation.
-- One invocation targets one group.
+- One invocation targets one personal profile or group.
 
 Do not add schedulers, bulk posting, stealth, credential storage, CAPTCHA handling, proxy rotation, or automatic live retries.
 

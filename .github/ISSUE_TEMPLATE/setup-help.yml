@@ -17,8 +17,6 @@ body:
         - Facebook login
         - Plugin installation
         - Hermes skill installation
-        - Telegram gateway
-        - WhatsApp integration
     validations:
       required: true
   - type: textarea

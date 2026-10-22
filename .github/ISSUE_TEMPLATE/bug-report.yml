@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible plugin, worker, or messaging integration defect.
+description: Report a reproducible plugin, worker, or skill defect.
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -19,9 +19,7 @@ body:
       options:
         - OpenCLI plugin
         - Local worker
-        - Hermes Telegram
-        - Hermes WhatsApp
-        - WhatsApp Business
+        - Hermes skill
         - Setup or doctor
     validations:
       required: true

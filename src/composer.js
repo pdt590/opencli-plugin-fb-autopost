@@ -263,8 +263,33 @@ const FIND_ENABLED_POST_BUTTON_SCRIPT = `(() => {
   return { found: false, reason: 'button-not-found' };
 })()`;
 
+export const POST_FEED_HELPERS = `
+  const normalizeCaption = value => String(value || '').replace(/\\s+/g, ' ').trim();
+  const feedPosts = () => Array.from(document.querySelectorAll('[role="article"]'))
+    .filter(elementVisible).flatMap(article => {
+      const message = article.querySelector('[data-ad-preview="message"], [data-ad-comet-preview="message"]');
+      if (!message) return [];
+      return Array.from(article.querySelectorAll('a[href]')).flatMap(link => {
+        let url;
+        try { url = new URL(link.href, location.href); } catch { return []; }
+        if (url.origin !== location.origin) return [];
+        const group = location.pathname.match(/^\\/groups\\/([^/]+)/);
+        if (group && !url.pathname.startsWith('/groups/' + group[1] + '/')) return [];
+        if (!/\\/(posts|permalink)\\/[^/]+/.test(url.pathname)) return [];
+        const id = url.origin + url.pathname.replace(/\\/$/, '');
+        const time = link.querySelector('time');
+        const date = time?.getAttribute('datetime');
+        const labels = [link.innerText, link.getAttribute('aria-label'), time?.textContent].filter(Boolean);
+        const fresh = labels.some(label => /^(just now|vừa xong|vừa mới|刚刚|剛剛)$/i.test(label.trim())) ||
+          (date && Date.parse(date) >= (window.__opencliPostSubmission?.startedAt || Infinity) - 5000);
+        return [{ id, caption: normalizeCaption(message.innerText || message.textContent), fresh: Boolean(fresh) }];
+      });
+    });
+`;
+
 const CLICK_POST_BUTTON_SCRIPT = `(() => {
   ${ACTIVE_DIALOG_HELPERS}
+  ${POST_FEED_HELPERS}
   const normalize = (value) => String(value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
   const labelSet = labels.map(normalize).filter(Boolean);
   const dialog = activeDialog();
@@ -285,6 +310,16 @@ const CLICK_POST_BUTTON_SCRIPT = `(() => {
     const matched = labelSet.some((label) => text === label || text.startsWith(label));
     if (matched && !disabled(el)) {
       el.scrollIntoView({ block: 'center', inline: 'center' });
+      window.__opencliPostNotices = new Map(
+        Array.from(document.querySelectorAll('[role="alert"], [role="status"], [aria-live="polite"], [aria-live="assertive"]'))
+          .map(node => [node, node.innerText || node.textContent || ''])
+      );
+      window.__opencliPostSubmission = {
+        caption: normalizeCaption(expectedCaption),
+        startedAt: Date.now(),
+        url: location.href,
+        previousPosts: feedPosts().map(post => post.id),
+      };
       el.click();
       return { clicked: true, label: text };
     }
@@ -292,48 +327,34 @@ const CLICK_POST_BUTTON_SCRIPT = `(() => {
   return { clicked: false, reason: 'button-not-found-or-disabled' };
 })()`;
 
-const POST_OUTCOME_SCRIPT = `(() => {
+export const POST_OUTCOME_SCRIPT = `(() => {
   ${ACTIVE_DIALOG_HELPERS}
-  const text = (document.body && document.body.innerText || '').replace(/\\s+/g, ' ');
-  const lower = text.toLowerCase();
-  const dialogOpen = Boolean(activeDialog());
-  const pendingPatterns = [
-    /pending approval/i,
-    /submitted for review/i,
-    /submitted to admins/i,
-    /submitted to the admins/i,
-    /submitted to admin/i,
-    /post has been submitted/i,
-    /review by an admin/i,
-    /your post is pending/i,
-    /menunggu kelulusan/i,
-    /menunggu persetujuan/i,
-    /等待批准/,
-    /待审核/,
-    /待審核/
-  ];
-  const errorPatterns = [
-    /action blocked/i,
-    /you can't post right now/i,
-    /try again later/i,
-    /failed to post/i,
-    /couldn't publish/i,
-    /无法发布/,
-    /無法發布/
-  ];
-  if (pendingPatterns.some((pattern) => pattern.test(text))) {
-    return { status: 'pending-review', message: 'Facebook says the post is pending review.' };
+  ${POST_FEED_HELPERS}
+  const baseline = window.__opencliPostNotices;
+  if (!(baseline instanceof Map)) return { status: 'waiting', message: 'No submission evidence baseline.' };
+  const notices = Array.from(document.querySelectorAll('[role="alert"], [role="status"], [aria-live="polite"], [aria-live="assertive"]'))
+    .filter(elementVisible)
+    .filter(node => !node.querySelector('[role="article"], [data-ad-preview="message"]'))
+    .filter(node => baseline.get(node) !== (node.innerText || node.textContent || ''));
+  const text = notices.map(node => node.innerText || node.textContent || '').join(' ').replace(/\\s+/g, ' ').trim();
+  const pending = /pending approval|submitted for review|submitted to (the )?admins?|your post is pending|đang chờ phê duyệt|đang chờ duyệt|đã gửi.*phê duyệt|等待批准|待审核|待審核/i;
+  const failed = /action blocked|you can't post right now|try again later|failed to post|couldn't publish|couldn't post|không thể đăng|đăng bài thất bại|无法发布|無法發布/i;
+  const success = /your post (is now published|was published|has been published|was shared|has been shared)|post published|posted successfully|bài viết (của bạn )?đã được (đăng|chia sẻ)|đăng bài thành công|发布成功|發佈成功/i;
+  if (failed.test(text)) return { status: 'failed', message: 'Facebook showed a new posting error after submission.' };
+  if (pending.test(text)) return { status: 'pending-review', message: 'Facebook confirmed submission for review; not published yet.' };
+  if (!activeDialog() && success.test(text)) {
+    return { status: 'posted', message: 'Facebook displayed a new publication success notification after submission.' };
   }
-  if (errorPatterns.some((pattern) => pattern.test(text))) {
-    return { status: 'failed', message: 'Facebook showed an error after clicking Post.' };
+  const submission = window.__opencliPostSubmission;
+  if (!activeDialog() && submission?.caption && submission.url === location.href) {
+    const post = feedPosts().find(post => post.caption === submission.caption && post.fresh &&
+      !submission.previousPosts.includes(post.id));
+    if (post) return {
+      status: 'posted', evidence: 'feed-post', post_url: post.id,
+      message: 'Verified a new, freshly timestamped feed post with the exact submitted caption and a new permalink.',
+    };
   }
-  if (!dialogOpen) {
-    return { status: 'posted', message: 'Composer closed after clicking Post.' };
-  }
-  if (lower.includes('posting') || lower.includes('publishing')) {
-    return { status: 'waiting', message: 'Facebook is still publishing.' };
-  }
-  return { status: 'waiting', message: 'Waiting for Facebook post outcome.' };
+  return { status: 'waiting', message: 'Waiting for explicit Facebook publication evidence; composer closure alone is insufficient.' };
 })()`;
 
 export async function openComposer(page, { screenshotDir, timeoutMs = 10000, intervalMs = 250 } = {}) {
@@ -441,7 +462,7 @@ export async function findEnabledPostButton(page) {
   });
 }
 
-export async function clickPostButton(page, { screenshotDir } = {}) {
+export async function clickPostButton(page, { screenshotDir, caption = '' } = {}) {
   const state = await findEnabledPostButton(page);
   if (!state?.found || !state.enabled) {
     const screenshot = await captureScreenshot(page, screenshotDir, 'post-button-not-ready');
@@ -450,6 +471,7 @@ export async function clickPostButton(page, { screenshotDir } = {}) {
 
   const clicked = await evaluateWithArgs(page, CLICK_POST_BUTTON_SCRIPT, {
     labels: POST_BUTTON_LABELS,
+    expectedCaption: caption,
   });
   if (!clicked?.clicked) {
     const screenshot = await captureScreenshot(page, screenshotDir, 'post-button-click-failed');

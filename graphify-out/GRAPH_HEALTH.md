@@ -1,23 +1,23 @@
-# Post-build graph health
+# Current exported graph health
 
-This diagnostic checks the updated exported graph. It cannot reconstruct edges collapsed during extraction or graph construction.
+Post-build checks cannot reconstruct edges collapsed before export.
 
 [graphify] MultiDiGraph edge-collapse diagnostic
 input: <in-memory>
 input_stage: provided JSON (normal graph.json is post-build)
 effective_directed: <direct-call>
-nodes: 500
+nodes: 258
 unverified_code_nodes: 0
-raw_edges: 1311
-valid_candidate_edges: 1311
+raw_edges: 593
+valid_candidate_edges: 593
 missing_endpoint_edges: 0
 dangling_endpoint_edges: 0
 external_reference_edges: 0
-self_loop_edges: 1
+self_loop_edges: 0
 exact_duplicate_edges: 0
-directed_unique_endpoint_pairs: 1311
+directed_unique_endpoint_pairs: 593
 directed_same_endpoint_collapsed_edges: 0
-undirected_unique_endpoint_pairs: 1311
+undirected_unique_endpoint_pairs: 593
 undirected_same_endpoint_collapsed_edges: 0
 same_endpoint_group_count: 0
 relation_variant_groups: 0
@@ -25,7 +25,7 @@ source_file_variant_groups: 0
 source_location_variant_groups: 0
 context_variant_groups: 0
 post_build_graph_type: Graph
-post_build_edges: 1311
+post_build_edges: 593
 producer_suppression_sites: 12
 producer_suppression_examples:
   - L1789 seen_ids arity=unknown

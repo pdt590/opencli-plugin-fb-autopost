@@ -1,66 +1,45 @@
 # OpenCLI Facebook Autopost
 
-Đăng bài lên **trang cá nhân** hoặc **group Facebook** bằng trình duyệt đã đăng nhập trên máy của bạn. Có thể chạy trực tiếp bằng OpenCLI hoặc gửi yêu cầu qua Telegram/WhatsApp trên Hermes.
+Đăng bài lên **trang cá nhân** hoặc **group Facebook** bằng Chrome/Brave trên máy của bạn. Dùng trực tiếp OpenCLI, worker JSON hoặc skill Hermes hợp nhất tại [`skills/facebook-post`](skills/facebook-post/SKILL.md).
 
-Lệnh mặc định chỉ chuẩn bị **bản nháp (dry-run)** và lưu screenshot. Chạy trực tiếp cần `--confirm true` để đăng; qua Hermes cần xem bản nháp rồi trả lời `POST`.
+CLI mặc định chỉ kiểm tra bản nháp, không tạo ảnh xem trước (`screenshot: null`). Skill Hermes luôn nhập chậm và tự nhận diện ý định: yêu cầu đăng rõ ràng thì đăng một lần, yêu cầu soạn nháp thì chưa đăng; chỉ hỏi lại khi còn mơ hồ. Không cần gõ `POST` hoặc `CANCEL`. **Skill giữ các tab đăng bài đến khi kiểm tra xong toàn bộ kết quả, rồi đóng đúng các tab tác vụ.** CLI trực tiếp mặc định đóng tab sau từng lần gọi. Screenshot chỉ được lưu cho kết quả đăng hoặc chẩn đoán lỗi. Các tab người dùng đang mở được giữ nguyên.
 
-## Chọn cách sử dụng
+## 1. Yêu cầu
 
-| Nhu cầu | Cách chạy | Cần Hermes? |
-| --- | --- | --- |
-| Đăng lên trang cá nhân | `opencli facebook person-post` | Không |
-| Đăng vào group | `opencli facebook group-post` | Không |
-| Yêu cầu đăng qua Telegram/WhatsApp | Skill Hermes → worker → OpenCLI | Có |
-| Menu WhatsApp Business Cloud API | Dịch vụ webhook riêng, hiện chỉ hỗ trợ group | Không dùng luồng skill bên dưới |
-
-**Lộ trình:** cài OpenCLI và plugin → kết nối Browser Bridge → chọn profile → chạy dry-run. Sau khi chạy trực tiếp thành công, cài thêm Hermes nếu cần điều khiển từ chat.
-
-## 1. Chuẩn bị
-
-- Node.js **22.12 trở lên**, npm và Git.
-- Chrome hoặc Brave với extension **OpenCLI Browser Bridge**.
-- Đăng nhập Facebook thủ công trong đúng profile trình duyệt.
-- Các ví dụ bên dưới dùng **OpenCLI 2.0.0**, phiên bản đã kiểm thử với profile cụ thể.
-- Hermes chỉ cần thiết khi dùng Telegram/WhatsApp. Xem [hướng dẫn Telegram](docs/hermes-telegram.md) và [WhatsApp](docs/hermes-whatsapp.md).
-
-Kiểm tra Node và npm:
+- Node.js **22.20 trở lên** và npm, Git.
+- OpenCLI **2.0.0** hoặc bản 2.x tương thích các API tab.
+- Chrome/Brave với extension OpenCLI Browser Bridge, Facebook đã đăng nhập thủ công.
+- Hermes chỉ cần khi sử dụng skill; cài skill không tự cài plugin hay extension.
 
 ```sh
 node --version
 npm --version
 ```
 
-Worker và dry-run trang cá nhân đã được kiểm thử trên Windows. `install.sh` dành cho macOS/Linux; trên Windows dùng các lệnh cài thủ công dưới đây.
-
-## 2. Cài dự án và OpenCLI
+## 2. Cài plugin
 
 ```sh
 git clone https://github.com/pdt590/opencli-plugin-fb-autopost.git
 cd opencli-plugin-fb-autopost
 npm install
 npm install -g @jackwener/opencli@2.0.0
-opencli --version
 ```
 
-Nếu đã có repo, chuyển vào thư mục hiện tại của repo trước khi chạy các lệnh còn lại. Không cần clone lần nữa.
+Từ thư mục repo, cài plugin:
 
-`npm install` cài dependency của dự án; lệnh cài global giúp gọi `opencli` trực tiếp trong terminal. Nếu không cài được global, có thể dùng `npx opencli`, nhưng kiểm tra phiên bản bằng `npx opencli --version`: dependency trong `package.json` hiện ghim 1.8.3, có thể khác bản global 2.0.0.
-
-### Cài plugin từ thư mục repo
-
-**Windows — PowerShell:**
+**Windows PowerShell:**
 
 ```powershell
 opencli plugin install "file://$($PWD.Path)"
 ```
 
-**macOS/Linux — Bash/Zsh:**
+**macOS/Linux:**
 
 ```sh
 opencli plugin install "file://$(pwd)"
 ```
 
-Kiểm tra plugin và hai lệnh:
+Kiểm tra:
 
 ```sh
 opencli plugin list
@@ -68,255 +47,170 @@ opencli facebook person-post --help
 opencli facebook group-post --help
 ```
 
-Plugin có tên **`fb-autopost`**. Nếu đã cài từ repo này, kiểm tra đường dẫn trong `opencli plugin list` để chắc chắn đang dùng đúng thư mục mã nguồn.
+Plugin có tên `fb-autopost`. Nếu đã cài, kiểm tra đường dẫn trong `plugin list` để chắc đang dùng đúng checkout. Có thể dùng `npx opencli` thay cho `opencli` nếu không cài global.
 
-## 3. Kết nối trình duyệt và chọn profile
+## 3. Kết nối trình duyệt và profile
 
-1. Cài Browser Bridge theo [hướng dẫn OpenCLI](https://github.com/jackwener/OpenCLI).
-2. Bật extension trong profile Chrome/Brave dùng cho Facebook.
-3. Đăng nhập Facebook thủ công trong profile đó.
-4. Giữ trình duyệt mở và kiểm tra kết nối:
+Cài [Browser Bridge theo hướng dẫn OpenCLI](https://github.com/jackwener/OpenCLI), bật extension trong đúng profile Chrome/Brave, đăng nhập Facebook thủ công và giữ trình duyệt mở.
 
 ```sh
 opencli doctor
 opencli profile list
 ```
 
-Chọn một profile có `connected: true`. **`xmqguda9` trong các ví dụ là profile thử nghiệm; thay bằng ID/alias của bạn.** Profile OpenCLI là ngữ cảnh trình duyệt, không phải URL hay ID tài khoản Facebook.
+- Chỉ **một profile kết nối**: không cần khai báo `--profile`, dùng mặc định của trình duyệt/OpenCLI.
+- **Nhiều profile kết nối**: chọn rõ một ID/alias và thêm `--profile <id>` trước `facebook`. Worker sẽ dừng nếu bạn chưa chọn.
+- Không profile nào kết nối: mở đúng trình duyệt và kiểm tra Browser Bridge trước khi chạy lại.
 
-Luôn truyền `--profile` khi có nhiều profile. Trong Facebook, chọn đúng danh tính cá nhân trước khi dùng `person-post`; lệnh này không dùng để đăng dưới danh nghĩa Page.
+Không tự chọn profile khác nếu thiếu hoặc mất kết nối. `profile` là ngữ cảnh trình duyệt, không phải URL Facebook. Với `person-post`, chọn danh tính cá nhân trong Facebook, không dùng Page.
 
-## 4. Chạy trực tiếp bằng OpenCLI
+## 4. Đăng trang cá nhân
 
-### A. Trang cá nhân — không cần cấu hình group
-
-Chuẩn bị bản nháp chỉ có chữ:
+Chạy thử chỉ có chữ:
 
 ```sh
-opencli --profile xmqguda9 facebook person-post --caption "Bản nháp thử nghiệm, chưa đăng." --slow true --dry-run true --keep-tab true
+opencli facebook person-post --caption "Bản nháp thử nghiệm, chưa đăng." --slow true --dry-run true
 ```
 
-Chuẩn bị caption từ file UTF-8 và ảnh trên máy:
+Caption từ file UTF-8 và ảnh local:
 
 ```sh
-opencli --profile xmqguda9 facebook person-post --caption-file caption.txt --images "photo1.jpg,photo2.png" --slow true --dry-run true --keep-tab true
+opencli facebook person-post --caption-file caption.txt --images "photo1.jpg,photo2.png" --slow true --dry-run true
 ```
 
-Thay các tên file bằng file thật. Kết quả mong đợi là `status: dry-run-ready`, kèm `profile_url` và đường dẫn `screenshot`. Mở screenshot hoặc xem composer để kiểm tra tài khoản, caption, ảnh và đối tượng xem bài.
+Thay tên file bằng file thật. Kết quả cần có `status: dry-run-ready`, `profile_url`, `screenshot: null` và `tab_closed: true`. Kiểm tra dữ liệu văn bản và đích đăng; dry-run không tạo ảnh xem trước và không giữ tab trình duyệt.
 
-**Chỉ sau khi xem bản nháp**, dùng cùng nội dung và thay cờ dry-run bằng xác nhận đăng:
+Sau khi xem bản nháp, dùng đúng dữ liệu đó và thay `--dry-run true` bằng `--confirm true`:
 
 ```sh
-opencli --profile xmqguda9 facebook person-post --caption-file caption.txt --images "photo1.jpg,photo2.png" --slow true --confirm true
+opencli facebook person-post --caption-file caption.txt --images "photo1.jpg,photo2.png" --slow true --confirm true
 ```
 
-Mỗi lần gọi tạo một composer mới, không tiếp tục tab dry-run trước đó. Nếu Facebook hỏi về bản nháp cũ, đóng/bỏ bản nháp đó thủ công. Đối tượng xem bài được giữ theo Facebook; lệnh không tự đổi sang công khai.
+Mỗi lần gọi tạo một tab/composer mới, không tiếp tục tab dry-run cũ. Audience được giữ theo cài đặt Facebook, không tự đổi sang công khai.
 
-### B. Group — dùng URL đầy đủ
+## 5. Đăng group
 
-Chạy dry-run với group mà bạn được phép đăng:
+Dùng URL đầy đủ của group được phép đăng:
 
 ```sh
-opencli --profile xmqguda9 facebook group-post --group-url "https://www.facebook.com/groups/<GROUP_ID>" --caption "Bản nháp thử nghiệm trong group." --slow true --dry-run true --keep-tab true
+opencli facebook group-post --group-url "https://www.facebook.com/groups/<GROUP_ID>" --caption-file caption.txt --slow true --dry-run true
 ```
 
-Thay `<GROUP_ID>` bằng ID/slug group thật. Kết quả có `group_url` thay vì `profile_url`. Muốn dùng caption file hoặc ảnh, thêm các tùy chọn giống lệnh trang cá nhân.
+Thay `<GROUP_ID>` bằng ID/slug thật. Có thể thêm `--images` giống lệnh trang cá nhân. Sau khi kiểm tra nội dung và đích đăng, chạy lại cùng dữ liệu với `--confirm true` thay cho cờ dry-run. Không truyền cả hai cờ cùng lúc.
 
-Sau khi kiểm tra, chạy lại cùng dữ liệu với `--confirm true` thay cho `--dry-run true`. **Không truyền cả hai cờ trong cùng một lệnh.**
-
-### Các tùy chọn chung
-
-| Tùy chọn | Ý nghĩa |
-| --- | --- |
-| `--caption "..."` | Caption nhập trực tiếp |
-| `--caption-file caption.txt` | Đọc caption UTF-8; không dùng đồng thời với `--caption` |
-| `--images "a.jpg,b.png"` | Tối đa 10 ảnh local: jpg, jpeg, png, webp, gif |
-| `--slow true` | Nhập từng đoạn và nghỉ giữa các bước; mặc định tắt khi chạy CLI trực tiếp |
-| `--dry-run true` | Chuẩn bị bản nháp, không bấm Post; đây cũng là chế độ mặc định nếu không xác nhận |
-| `--keep-tab true` | Giữ tab để xem lại |
-| `--confirm true` | Cho phép bấm Post một lần |
-| `--screenshot-dir <dir>` | Chọn thư mục lưu screenshot |
-
-Screenshot mặc định nằm trong `artifacts/facebook-person-post/` hoặc `artifacts/facebook-group-post/`. Chế độ chậm không bảo đảm tránh được hệ thống phát hiện bot của Facebook.
-
-## 5. Điều khiển từ Telegram/WhatsApp bằng Hermes
-
-### Cài hai skill
-
-Cài Hermes theo [tài liệu chính thức](https://github.com/NousResearch/hermes-agent), cấu hình provider/model và xác nhận lệnh `hermes` chạy được. Sau đó, từ thư mục repo:
+Nếu có nhiều profile, ví dụ:
 
 ```sh
-node scripts/install-hermes-skill.js --dry-run
-node scripts/install-hermes-skill.js --force
+opencli --profile <chosen-id> facebook group-post --group-url "https://www.facebook.com/groups/<GROUP_ID>" --caption-file caption.txt --dry-run true
+```
+
+## 6. Skill Hermes và cách cài
+
+Một skill duy nhất: [`skills/facebook-post/SKILL.md`](skills/facebook-post/SKILL.md), hỗ trợ cả trang cá nhân lẫn group. Skill có liên kết tham khảo [bộ skill OpenCLI chính thức](https://github.com/jackwener/OpenCLI/tree/main/skills).
+
+**Cài từ checkout hiện tại:**
+
+```sh
+npx skills add . --skill facebook-post -a hermes-agent -g
 hermes skills list
 ```
 
-Installer cài/cập nhật hai skill:
-
-- [`facebook-group-post`](hermes/skills/social-media/facebook-group-post/SKILL.md)
-- [`facebook-person-post`](hermes/skills/social-media/facebook-person-post/SKILL.md)
-
-Chúng nằm dưới `~/.hermes/skills/social-media/`. Installer cũng ghi `FB_AUTOPOST_REPO` vào `~/.hermes/.env`; trên Windows, `~` tương ứng thư mục người dùng. `--force` thay thế bản skill đã cài.
-
-Chỉ cài một skill nếu cần:
+**Cài từ GitHub sau khi phiên bản mới đã được push:**
 
 ```sh
-node scripts/install-hermes-skill.js --skill facebook-person-post --force
+npx skills add pdt590/opencli-plugin-fb-autopost --skill facebook-post -a hermes-agent -g
 ```
 
-### Nếu đăng group qua alias
+`-g` cài vào Hermes của người dùng. CLI hiện tại trên Windows đã cài vào `%LOCALAPPDATA%/hermes/skills/`; trên hệ thống khác, xem đường dẫn thực tế được CLI in ra (thường `~/.hermes/skills/`). Bỏ `-g` để cài theo project; thêm `--copy` nếu muốn sao chép thay vì liên kết. Đây là cài **skill hướng dẫn**, không thay thế bước cài plugin/OpenCLI ở trên. Không cần publish một package npm riêng.
 
-Trang cá nhân không cần bước này. Với group, tạo alias `main`:
-
-```sh
-npm run setup -- --group-url "https://www.facebook.com/groups/<GROUP_ID>" --group-alias main
-```
-
-Lệnh tạo `config/settings.json`, `config/groups.json` và cài plugin nếu cần. Đây là cấu hình local, không commit thông tin group riêng tư. Có thể dùng URL group đầy đủ trong yêu cầu thay cho alias.
-
-### Chọn kênh chat
-
-**Telegram:** tạo bot qua `@BotFather`, lấy numeric user ID và cấu hình người dùng được phép trong Hermes:
-
-```sh
-hermes gateway setup
-hermes gateway start
-hermes gateway status
-```
-
-Dùng numeric ID, không dùng username `@...`. Giữ bot token riêng tư. Xem [các bước cấu hình Telegram](docs/hermes-telegram.md).
-
-**WhatsApp:** dùng gateway WhatsApp của Hermes và ghép nối theo hướng dẫn CLI:
-
-```sh
-hermes whatsapp
-hermes gateway start
-hermes gateway status
-```
-
-Xem [các bước cấu hình WhatsApp](docs/hermes-whatsapp.md). Cả hai kênh phải truy cập được repo, worker và ảnh local trên máy chạy trình duyệt.
-
-### Gửi yêu cầu đăng trang cá nhân
-
-Gửi cho Hermes qua bot Telegram hoặc cuộc trò chuyện WhatsApp đã cấu hình:
+Ví dụ yêu cầu cho Hermes:
 
 ```text
-Dùng skill facebook-person-post.
+Dùng skill facebook-post.
 Chuẩn bị bài đăng Facebook cá nhân.
-Profile trình duyệt: xmqguda9
 Caption: Hôm nay mình hoàn thành một dự án mới 🌿.
-NO IMAGES. Dùng chế độ nhập chậm.
-Chỉ chạy dry-run và gửi lại screenshot.
+Tự nhận diện ảnh đính kèm nếu có và đăng một lần.
 ```
 
-Nếu có ảnh, đính kèm ảnh vào chat và thay `NO IMAGES` bằng “Dùng ảnh đính kèm”. Gateway phải tải ảnh về thành file local trước khi worker chạy.
+Với group, cung cấp URL group thay cho đích trang cá nhân. Nếu có ảnh, cung cấp đường dẫn ảnh local. Khi chỉ có một profile kết nối, skill dùng mặc định; nhiều profile thì hỏi bạn chọn.
 
-### Gửi yêu cầu đăng group
+Hermes tự nhận diện ảnh đính kèm hoặc đường dẫn ảnh được cung cấp; không có ảnh thì đăng chữ, không hỏi thêm `NO IMAGES`. Skill luôn dùng `--slow true`. “Đăng bài này” cho phép đăng một lần khi đủ thông tin; “chỉ soạn nháp” không đăng; “đừng đăng nữa” hủy tác vụ chưa gửi. Không bắt nhập từ khóa xác nhận. Nếu bạn yêu cầu duyệt trước, skill vẫn chờ lời đồng ý tự nhiên. Nội dung hoặc ảnh gửi riêng mà chưa rõ ý định sẽ được hỏi lại. Không chạy dry-run hay tạo ảnh xem trước trong luồng thông thường; chỉ dry-run khi bạn yêu cầu rõ. Khi ngữ cảnh tài khoản thay đổi, skill hỏi lại tài khoản cần dùng. Plugin chỉ lưu screenshot kỹ thuật sau thao tác đăng hoặc khi lỗi, nhưng không dùng chúng làm bước duyệt ảnh.
 
-```text
-Dùng skill facebook-group-post.
-Chuẩn bị bài đăng group main.
-Profile trình duyệt: xmqguda9
-Caption: Nội dung bài đăng trong group.
-NO IMAGES. Dùng chế độ nhập chậm.
-Chỉ chạy dry-run và gửi lại screenshot.
-```
+## 7. Worker JSON
 
-Hermes trả về caption, đích đăng, số ảnh và screenshot. Kiểm tra bản nháp rồi trả lời trong **cùng cuộc trò chuyện**:
-
-- `POST`: đăng một lần từ nội dung vừa xem.
-- `CANCEL`: hủy xác nhận; đóng/bỏ bản nháp đang mở trên Facebook thủ công.
-
-Đổi caption, ảnh, profile hoặc đích đăng cần một dry-run mới. Skill không chấp nhận xác nhận từ cuộc trò chuyện khác, `POST` sau khi hủy, hoặc xác nhận khi chưa có dry-run thành công.
-
-### WhatsApp Business Cloud API là luồng riêng
-
-Gateway WhatsApp của Hermes ở trên không cần chạy dịch vụ webhook của repo. Nếu cần menu tương tác qua WhatsApp Business Cloud API, dùng [hướng dẫn riêng](docs/whatsapp-business-setup.md). Luồng đó cần cấu hình Meta/HTTPS webhook và hiện chỉ hỗ trợ group.
-
-## 6. Chạy worker bằng JSON
-
-Worker là cầu nối mà hai skill Hermes sử dụng:
-
-```text
-Telegram/WhatsApp → Hermes skill → JSON job → local worker → OpenCLI → Browser Bridge → Facebook
-```
-
-Ví dụ job trang cá nhân, lưu thành `artifacts/hermes-jobs/person.dry-run.json` sau khi tạo thư mục:
+Worker nhận một job local, phù hợp khi cần gọi từ script:
 
 ```json
 {
   "target": "person",
   "mode": "dry-run",
-  "profile": "xmqguda9",
   "slow": true,
   "caption": "Bản nháp từ worker.",
   "images": []
 }
 ```
 
-Chạy từ thư mục repo:
+Lưu tại một file, ví dụ `examples/my-job.json`, rồi chạy:
 
 ```sh
-node worker/posting-worker.js --job artifacts/hermes-jobs/person.dry-run.json
+node worker/posting-worker.js --job examples/my-job.json
 ```
 
-Group job dùng `"target": "group"` và thêm `"groupAlias": "main"` hoặc `groupUrl`. Job cũ bỏ `target` vẫn được hiểu là group.
-
-Đường dẫn caption file, ảnh và screenshot **trong JSON tính từ thư mục chứa job**, không phải thư mục repo. Nên dùng đường dẫn tuyệt đối cho ảnh gateway. Windows JSON cần dùng dấu `/` hoặc escape `\` thành `\\`.
-
-Live job phải có `"mode": "live"` và cờ xác nhận trên dòng lệnh:
+Bỏ trường `profile` nếu chỉ có một profile kết nối. Khi có nhiều profile, thêm `"profile": "<chosen-id>"`. Group job dùng `"target": "group"` và thêm `groupUrl`, hoặc tạo alias:
 
 ```sh
-node worker/posting-worker.js --job artifacts/hermes-jobs/person.live.json --confirm true
+npm run setup -- --group-url "https://www.facebook.com/groups/<GROUP_ID>" --group-alias main
 ```
 
-Tạo file live từ dữ liệu đã xem, chỉ đổi mode. Worker kiểm tra mode và cờ confirm; việc xác nhận `POST`/`CANCEL` theo cuộc trò chuyện do skill Hermes quản lý. Xem [schema và hướng dẫn worker](docs/local-worker.md).
+Sau đó dùng `"groupAlias": "main"`. Trang cá nhân không cần cấu hình group. Đường dẫn caption file, ảnh và screenshot **trong JSON tính từ thư mục chứa job**; dùng đường dẫn tuyệt đối nếu cần tránh nhầm lẫn.
 
-## 7. Kiểm tra và xử lý lỗi
+Live job phải có `"mode": "live"` và cờ trên dòng lệnh:
 
-| Tình huống | Kiểm tra/cách xử lý |
+```sh
+node worker/posting-worker.js --job examples/my-live-job.json --confirm true
+```
+
+Worker kiểm tra mode và cờ confirm; skill quản lý sự đồng ý của người dùng. Xem [schema worker](docs/local-worker.md).
+
+## Tùy chọn và kết quả
+
+| Tùy chọn | Ý nghĩa |
 | --- | --- |
-| Không tìm thấy `opencli` | Mở terminal mới, kiểm tra PATH và `opencli --version`; xem lưu ý `npx` ở bước 2 |
-| Không thấy `person-post`/`group-post` | Kiểm tra `opencli plugin list`, đường dẫn repo và chạy lệnh `--help` |
-| Profile không kết nối | Mở đúng Chrome/Brave, bật Browser Bridge, kiểm tra `opencli profile list` |
-| Sai tài khoản hoặc đang dùng Page | Chọn đúng danh tính cá nhân trong Facebook; chọn lại `--profile` |
-| Hermes không thấy skill mới | Cài lại skill bằng installer và kiểm tra `hermes skills list` |
-| Thiếu ảnh/caption file | Kiểm tra file tồn tại và quy tắc đường dẫn tương đối của CLI/job JSON |
-| Nhập chậm bị gián đoạn | Xem screenshot, kiểm tra/bỏ bản nháp dở; không tự chèn lại toàn bộ caption |
-| `failed` hoặc `unknown` sau thao tác đăng | Kiểm tra Facebook thủ công trước khi làm gì tiếp; không tự đăng lại |
-| CAPTCHA, checkpoint, 2FA hoặc action block | Dừng và xử lý thủ công trong profile đang dùng |
+| `--caption` / `--caption-file` | Chọn một nguồn caption không rỗng |
+| `--images "a.jpg,b.png"` | Tối đa 10 ảnh local jpg/jpeg/png/webp/gif |
+| `--slow true` | Nhập theo đoạn, nghỉ giữa các bước; không bảo đảm tránh phát hiện bot |
+| `--dry-run true` | Kiểm tra bản nháp, không tạo screenshot và không bấm Post |
+| `--confirm true` | Cho phép bấm Post một lần |
+| `--screenshot-dir <dir>` | Thư mục lưu screenshot |
 
-`npm run doctor` cung cấp chẩn đoán luồng group/cấu hình local. Nếu chỉ dùng trang cá nhân, lỗi thiếu cấu hình group không có nghĩa `person-post` không chạy được. Kiểm tra Browser Bridge bằng `opencli doctor` và profile cụ thể trước.
+Khi chạy skill, luôn thêm `--defer-close true --site-session persistent`: plugin kiểm tra kết quả và giữ tab, trả `task_tab`, `cleanup_deferred: true`, `tab_closed: false`. Skill ghi lại ID của từng tab, kiểm tra đủ kết quả của tất cả bài được yêu cầu rồi mới đóng các tab tác vụ. Chrome đang chạy được tái sử dụng; Bridge mất kết nối không phải lý do khởi chạy Chrome khác. Chạy CLI trực tiếp không có `--defer-close` vẫn tự đóng tab sau từng bài.
 
-## 8. Test và đóng gói
+Kiểm tra lại rồi đóng các tab đã ghi nhận trong cùng profile:
+
+```sh
+opencli facebook post-tabs --tabs "<task_tab_1>,<task_tab_2>" --action inspect --site-session persistent
+opencli facebook post-tabs --tabs "<task_tab_1>,<task_tab_2>" --action close --site-session persistent
+```
+
+Thêm `--profile <chosen-id>` trước `facebook` nếu đã chọn profile cụ thể. Chỉ truyền ID tab do tác vụ này tạo; không đóng các tab có sẵn hoặc cả cửa sổ Chrome. Nếu có lỗi dọn tab, **không đăng lại**.
+
+Trước khi đóng tab, plugin chờ tối đa 30 giây để nhận diện kết quả. `posted` được xác nhận bằng thông báo thành công mới và composer đã đóng, hoặc bằng bài mới trên bảng tin tại đúng đích đăng: caption khớp đầy đủ, thời gian vừa đăng và permalink chưa xuất hiện trước khi gửi. Trường hợp bảng tin trả thêm `evidence: feed-post` và `post_url`, không cần có thông báo thành công. Chỉ thấy caption hoặc composer đóng chưa đủ. `pending-review` nghĩa chờ duyệt; `failed` là có thông báo lỗi; `unknown` là chưa đủ bằng chứng khi hết thời gian chờ. Skill giữ tab đến khi kiểm tra đủ kết quả rồi dọn các tab tác vụ, không tự đăng lại. Login/checkpoint/CAPTCHA/2FA/action block đều phải xử lý thủ công. Không lưu thông tin đăng nhập, lập lịch hay đăng hàng loạt.
+
+## Kiểm tra, đóng gói và phát triển
 
 ```sh
 npm test
+npm run doctor
 node scripts/package-local.js --dry-run
 npm run package
 ```
 
-Gói bàn giao nằm tại `dist/opencli-plugin-fb-autopost-local.tar.gz`, gồm mã nguồn, hai skill, hướng dẫn và test. `npm run package:local` là lệnh tương đương để tạo gói.
+`npm run doctor` còn kiểm tra cấu hình group; nếu chỉ dùng trang cá nhân, ưu tiên `opencli doctor` và `opencli profile list` để kiểm tra kết nối. `npm run package:local` tương đương tạo gói tại `dist/opencli-plugin-fb-autopost-local.tar.gz`.
 
-## Phạm vi và trạng thái kiểm thử
-
-- Máy hiện tại đã chạy dry-run trang cá nhân trên Windows/OpenCLI 2.0.0 với profile `xmqguda9`, caption tiếng Việt/emoji/nhiều dòng, ảnh và chế độ nhập chậm.
-- Worker thật đã trả về `dry-run-ready`; installer được kiểm tra trong Hermes home thử nghiệm.
-- Luồng gửi nhận qua gateway Telegram/WhatsApp thật và việc đăng live chưa được kiểm thử trong phiên triển khai này.
-- `posted` hiện dựa trên việc composer đóng sau thao tác Post, chưa phải xác minh permalink. `pending-review` nghĩa bài chờ duyệt; `unknown` nghĩa chưa xác định được kết quả.
-- Mỗi job xử lý một đích đăng. Không có scheduler, queue hay tự thử lại live. Không thu thập mật khẩu/cookie/session Facebook và không vượt CAPTCHA/checkpoint/2FA.
-
-## Tài liệu liên quan
-
-- [Checklist lần chạy đầu](docs/first-run-checklist.md)
-- [Đăng trang cá nhân](docs/person-post.md)
-- [Hermes + Telegram](docs/hermes-telegram.md) · [Hermes + WhatsApp](docs/hermes-whatsapp.md)
-- [Hướng dẫn vận hành](docs/operator-guide.md) · [Cấu hình local](docs/setup-guide.md)
-- [Worker JSON](docs/local-worker.md) · [Xử lý sự cố](docs/troubleshooting.md)
-- [Pilot checklist](docs/pilot-checklist.md) · [Release checklist](docs/release-checklist.md)
+Xem [xử lý sự cố](docs/troubleshooting.md). Gói gồm runtime, test và skill hợp nhất. Chỉ kiểm thử live khi người dùng đã xác nhận; test tự động không chứng minh bài thật đã được xuất bản.
 
 ## Nguồn và giấy phép
 
-Dự án mở rộng [OpenCLI](https://github.com/jackwener/OpenCLI) của Jack Wener và tích hợp [Hermes Agent](https://github.com/NousResearch/hermes-agent) của Nous Research. Đây là dự án cộng đồng độc lập, không được các nền tảng mạng xã hội bảo trợ.
+Dự án cộng đồng độc lập, dùng [OpenCLI](https://github.com/jackwener/OpenCLI) của Jack Wener và hỗ trợ [Hermes Agent](https://github.com/NousResearch/hermes-agent) của Nous Research.
 
-Giấy phép dự án: Apache-2.0. Xem [LICENSE](LICENSE), [NOTICE.md](NOTICE.md) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Giấy phép Apache-2.0. Xem [LICENSE](LICENSE), [NOTICE.md](NOTICE.md) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

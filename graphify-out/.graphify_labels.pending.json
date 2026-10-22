@@ -1,15 +1,13 @@
 {
-  "0": "whatsapp-business.test.js",
-  "2": "draft-store.js",
-  "6": "message-router.js",
+  "0": "validate.js",
+  "1": "post-flow.js",
+  "3": "posting-worker.js",
+  "4": "doctor.js",
+  "5": "package.json",
+  "6": "install.sh",
   "7": "Local Facebook group posting architecture",
-  "8": "server.js",
-  "9": "worker-client.js",
-  "11": "media-download.js",
-  "12": "Personal Facebook Posts from Telegram or WhatsApp",
-  "13": "WhatsApp Business interactive draft manager",
-  "15": "WhatsApp Business API Reference",
-  "16": "Personal Facebook Profile Posts",
-  "17": "Daily chat draft review POST CANCEL flow",
-  "18": "Single-job local posting worker contract"
+  "8": "Node 20 CI tests and whitespace checks",
+  "10": "package-local.js",
+  "11": "person-post.test.js",
+  "14": "Graph-first codebase navigation"
 }

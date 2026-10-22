@@ -179,6 +179,8 @@ export function buildWorkerResult({ job, opencliResult }) {
     caption_length: row?.caption_length ?? job.captionLength,
     image_count: row?.image_count ?? job.images.length,
     screenshot: row?.screenshot || null,
+    tab_closed: row?.tab_closed ?? null,
+    ...(row?.cleanup_warning ? { cleanup_warning: row.cleanup_warning } : {}),
     opencli_exit_code: opencliResult.status,
   };
 }

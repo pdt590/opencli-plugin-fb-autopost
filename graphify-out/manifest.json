@@ -18,27 +18,15 @@
     "semantic_hash": "a1064962891c602918f2da60fd707e63"
   },
   "group-post.js": {
-    "mtime": 1792666133.013438,
-    "seen": 1792666377.8748236,
-    "ast_hash": "57600225483db198554f8befcd9b24dd",
+    "mtime": 1792679587.8016899,
+    "seen": 1792679738.1577628,
+    "ast_hash": "46fc71d8958130f8e1eb173ad173ee48",
     "semantic_hash": ""
-  },
-  "hermes/skills/social-media/facebook-group-post/examples/dry-run-worker-job.json": {
-    "mtime": 1792666789.373892,
-    "seen": 1792667031.2404509,
-    "ast_hash": "d413fe65e1ab26da0c6ead3343afe3f2",
-    "semantic_hash": ""
-  },
-  "hermes/skills/social-media/facebook-group-post/examples/pending-review-worker-response.json": {
-    "mtime": 1792664244.7471697,
-    "seen": 1792664779.8281994,
-    "ast_hash": "dca52714300fcc907adf8ac72d23ca22",
-    "semantic_hash": "dca52714300fcc907adf8ac72d23ca22"
   },
   "install.sh": {
-    "mtime": 1792666945.5045805,
-    "seen": 1792667031.2404597,
-    "ast_hash": "b6c8b8e3ffde35a8b2d0c639c6686d0c",
+    "mtime": 1792669801.9153318,
+    "seen": 1792670065.6780035,
+    "ast_hash": "51deabedf41ff58ccf03d48dffe05335",
     "semantic_hash": ""
   },
   "opencli-plugin.json": {
@@ -48,9 +36,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1792665889.5351453,
-    "seen": 1792665937.8685257,
-    "ast_hash": "ecc281053217a0f84362730e83867ff0",
+    "mtime": 1792669724.6330998,
+    "seen": 1792670065.6780086,
+    "ast_hash": "5cf4a2df78fc9067c15fd6740e74acf3",
     "semantic_hash": ""
   },
   "scripts/doctor.js": {
@@ -59,16 +47,10 @@
     "ast_hash": "d3baab626d410b109099280e297a7bd2",
     "semantic_hash": "d3baab626d410b109099280e297a7bd2"
   },
-  "scripts/install-hermes-skill.js": {
-    "mtime": 1792666726.3997705,
-    "seen": 1792667031.2404704,
-    "ast_hash": "d9019675b1d2eff77a1e2ae9925ccb99",
-    "semantic_hash": ""
-  },
   "scripts/package-local.js": {
-    "mtime": 1792665914.2486515,
-    "seen": 1792665937.868551,
-    "ast_hash": "860a39fd52363102ccdc29d1a2e94063",
+    "mtime": 1792679707.1794744,
+    "seen": 1792679738.157822,
+    "ast_hash": "f40bd5e504070d11ae46a49d01254fa9",
     "semantic_hash": ""
   },
   "scripts/setup.js": {
@@ -90,22 +72,10 @@
     "semantic_hash": "3662d0c91c354cc6a825cdebbb8ced9c"
   },
   "src/composer.js": {
-    "mtime": 1792666275.794278,
-    "seen": 1792666377.8748596,
-    "ast_hash": "e3d6748de3c0634715a8bb47043de03b",
+    "mtime": 1792680977.114084,
+    "seen": 1792681027.0665271,
+    "ast_hash": "4063752b64352abbb943fb8c40577c87",
     "semantic_hash": ""
-  },
-  "src/draft-store.js": {
-    "mtime": 1792664244.7649817,
-    "seen": 1792664779.8282204,
-    "ast_hash": "bc6d0d8f26e9aa36389745d12ded7538",
-    "semantic_hash": "bc6d0d8f26e9aa36389745d12ded7538"
-  },
-  "src/group-store.js": {
-    "mtime": 1792664244.7659843,
-    "seen": 1792664779.828222,
-    "ast_hash": "21df12f42d31802bf4a37c06c94f1e2c",
-    "semantic_hash": "21df12f42d31802bf4a37c06c94f1e2c"
   },
   "src/images.js": {
     "mtime": 1792664244.7679932,
@@ -114,9 +84,9 @@
     "semantic_hash": "5e9b0fdfec4f4eab6f4e5645436a1357"
   },
   "src/job.js": {
-    "mtime": 1792666719.1676536,
-    "seen": 1792667031.2404902,
-    "ast_hash": "b4f862fc6927e556e33bcc2c8ccf5e78",
+    "mtime": 1792669878.289621,
+    "seen": 1792670065.6780312,
+    "ast_hash": "0d23a663184fa2f999be67384f4bd600",
     "semantic_hash": ""
   },
   "src/local-config.js": {
@@ -132,9 +102,9 @@
     "semantic_hash": ""
   },
   "src/result.js": {
-    "mtime": 1792665568.586347,
-    "seen": 1792665873.3640106,
-    "ast_hash": "264a7e867b4048be99a836e02a6a1ce2",
+    "mtime": 1792680897.519194,
+    "seen": 1792681027.0665486,
+    "ast_hash": "21c744a6e43ef4ad54432c62d978b250",
     "semantic_hash": ""
   },
   "src/validate.js": {
@@ -142,24 +112,6 @@
     "seen": 1792666377.8748822,
     "ast_hash": "048de86fb71a8b7ed991513b05f5aceb",
     "semantic_hash": ""
-  },
-  "src/webhook-event-store.js": {
-    "mtime": 1792664244.77355,
-    "seen": 1792664779.8282335,
-    "ast_hash": "3f459cb50d63e9967ecc4651382d78b1",
-    "semantic_hash": "3f459cb50d63e9967ecc4651382d78b1"
-  },
-  "src/whatsapp-flow-state.js": {
-    "mtime": 1792664244.7736459,
-    "seen": 1792664779.828235,
-    "ast_hash": "3814be3b2031c62a9a03da6a2bfcec71",
-    "semantic_hash": "3814be3b2031c62a9a03da6a2bfcec71"
-  },
-  "src/worker-client.js": {
-    "mtime": 1792664244.7745624,
-    "seen": 1792664779.8282368,
-    "ast_hash": "609e9bf8df95bf2eba9aef2827cffe60",
-    "semantic_hash": "609e9bf8df95bf2eba9aef2827cffe60"
   },
   "tests/artifacts.test.js": {
     "mtime": 1792664244.7768846,
@@ -173,34 +125,16 @@
     "ast_hash": "ed7a0701981658ac7fbc95dfedc786ed",
     "semantic_hash": "ed7a0701981658ac7fbc95dfedc786ed"
   },
-  "tests/docs.test.js": {
-    "mtime": 1792664244.778882,
-    "seen": 1792664779.8282416,
-    "ast_hash": "5af4526acd8c8a14cab2ec6daed5433a",
-    "semantic_hash": "5af4526acd8c8a14cab2ec6daed5433a"
-  },
-  "tests/draft-store.test.js": {
-    "mtime": 1792664244.7808828,
-    "seen": 1792664779.8282433,
-    "ast_hash": "27bd89b40ea9670f7395a3514f683632",
-    "semantic_hash": "27bd89b40ea9670f7395a3514f683632"
-  },
   "tests/group-post.test.js": {
-    "mtime": 1792664244.7818813,
-    "seen": 1792664779.8282447,
-    "ast_hash": "a7a311bad82e37fa549d892b0089c18e",
-    "semantic_hash": "a7a311bad82e37fa549d892b0089c18e"
-  },
-  "tests/hermes-skill.test.js": {
-    "mtime": 1792666785.8341835,
-    "seen": 1792667031.2405212,
-    "ast_hash": "762bda9f73f6a46689256efaa4a8035f",
+    "mtime": 1792677733.858852,
+    "seen": 1792677754.46645,
+    "ast_hash": "2bdf307299b456d71bebe43b035e3643",
     "semantic_hash": ""
   },
   "tests/packaging.test.js": {
-    "mtime": 1792668255.589555,
-    "seen": 1792668316.1569328,
-    "ast_hash": "8ba0d19a52517353152b0cddb6206c58",
+    "mtime": 1792670192.149874,
+    "seen": 1792670212.0200186,
+    "ast_hash": "80671946d89c55171f7a931e1ed506a8",
     "semantic_hash": ""
   },
   "tests/result.test.js": {
@@ -221,77 +155,29 @@
     "ast_hash": "690aebd8ef32ed875f026da18fec8e48",
     "semantic_hash": "690aebd8ef32ed875f026da18fec8e48"
   },
-  "tests/whatsapp-business.test.js": {
-    "mtime": 1792664244.7908819,
-    "seen": 1792664779.828254,
-    "ast_hash": "339cda15296e0341df433016df80b6da",
-    "semantic_hash": "339cda15296e0341df433016df80b6da"
-  },
-  "tests/whatsapp-flow-state.test.js": {
-    "mtime": 1792664244.7918913,
-    "seen": 1792664779.8282554,
-    "ast_hash": "c722eba465f7b8db8ea0b63860c3caa2",
-    "semantic_hash": "c722eba465f7b8db8ea0b63860c3caa2"
-  },
   "tests/worker.test.js": {
-    "mtime": 1792664244.7928832,
-    "seen": 1792664779.8282573,
-    "ast_hash": "16b1e47f0b93d799bd186c0db16504c8",
-    "semantic_hash": "16b1e47f0b93d799bd186c0db16504c8"
-  },
-  "whatsapp-business/interactive-menus.js": {
-    "mtime": 1792664244.7948806,
-    "seen": 1792664779.8282588,
-    "ast_hash": "ea256fcd6b647a693cabdee814999e6b",
-    "semantic_hash": "ea256fcd6b647a693cabdee814999e6b"
-  },
-  "whatsapp-business/media-download.js": {
-    "mtime": 1792664244.7948806,
-    "seen": 1792664779.8282607,
-    "ast_hash": "145af28f43fb5002402b956cef777b02",
-    "semantic_hash": "145af28f43fb5002402b956cef777b02"
-  },
-  "whatsapp-business/message-router.js": {
-    "mtime": 1792664244.796883,
-    "seen": 1792664779.828262,
-    "ast_hash": "462fedbf0a6a7d827073330edae72d15",
-    "semantic_hash": "462fedbf0a6a7d827073330edae72d15"
-  },
-  "whatsapp-business/send-message.js": {
-    "mtime": 1792664244.796883,
-    "seen": 1792664779.8282642,
-    "ast_hash": "563a48a93f353e0f4e84b04dfe12add0",
-    "semantic_hash": "563a48a93f353e0f4e84b04dfe12add0"
-  },
-  "whatsapp-business/server.js": {
-    "mtime": 1792664244.7978818,
-    "seen": 1792664779.828266,
-    "ast_hash": "541d1fc965d03dff3aac77abbde9b44b",
-    "semantic_hash": "541d1fc965d03dff3aac77abbde9b44b"
-  },
-  "whatsapp-business/verify-webhook.js": {
-    "mtime": 1792664244.7988806,
-    "seen": 1792664779.8282676,
-    "ast_hash": "821825bbfad1845b982c25b2b1344ea0",
-    "semantic_hash": "821825bbfad1845b982c25b2b1344ea0"
+    "mtime": 1792669659.36243,
+    "seen": 1792670065.678085,
+    "ast_hash": "83683c5467212a4ae4da5d106e811247",
+    "semantic_hash": ""
   },
   "worker/posting-worker.js": {
-    "mtime": 1792666976.901808,
-    "seen": 1792667031.2405734,
-    "ast_hash": "78f1b84fe5ecd76f4909e44c8dc11113",
+    "mtime": 1792669655.315148,
+    "seen": 1792670065.6780872,
+    "ast_hash": "7f5372cad28707975e3f379f9b57cd28",
     "semantic_hash": ""
   },
   ".github/ISSUE_TEMPLATE/bug-report.yml": {
-    "mtime": 1792664244.7086115,
-    "seen": 1792664779.8282707,
-    "ast_hash": "4ef8f736e80ad2a686d46f38f561eca4",
-    "semantic_hash": "4ef8f736e80ad2a686d46f38f561eca4"
+    "mtime": 1792669925.4964964,
+    "seen": 1792670065.6781025,
+    "ast_hash": "9a198dd2de2f7b4ccd1fc8652d3df755",
+    "semantic_hash": ""
   },
   ".github/ISSUE_TEMPLATE/setup-help.yml": {
-    "mtime": 1792664244.709617,
-    "seen": 1792664779.8282723,
-    "ast_hash": "4b84930058049b2e36e9e9abcb60469a",
-    "semantic_hash": "4b84930058049b2e36e9e9abcb60469a"
+    "mtime": 1792669927.606218,
+    "seen": 1792670065.6781046,
+    "ast_hash": "6669a0861ec5648e8b77deae793d8a0e",
+    "semantic_hash": ""
   },
   ".github/workflows/test.yml": {
     "mtime": 1792664244.7116127,
@@ -306,153 +192,51 @@
     "semantic_hash": "f36539ecc9af68f33ebd72770ce4a19e"
   },
   "CONTRIBUTING.md": {
-    "mtime": 1792664244.7156112,
-    "seen": 1792664779.8282766,
-    "ast_hash": "93fe31d67ceed1902c1e68d6e3f14069",
-    "semantic_hash": "93fe31d67ceed1902c1e68d6e3f14069"
+    "mtime": 1792669724.6361084,
+    "seen": 1792670065.678111,
+    "ast_hash": "bbd4b999767819a315b77da09eb13ad2",
+    "semantic_hash": ""
   },
   "NOTICE.md": {
-    "mtime": 1792664244.7176132,
-    "seen": 1792664779.8282783,
-    "ast_hash": "e916deb9d43dfd4972d526ef05c99632",
-    "semantic_hash": "e916deb9d43dfd4972d526ef05c99632"
+    "mtime": 1792669724.6371,
+    "seen": 1792670065.678113,
+    "ast_hash": "66c5e7e078c34d88c11ce68e1af01381",
+    "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792668304.9216518,
-    "seen": 1792668316.1569893,
-    "ast_hash": "35008164bb06a3500779e29ba1cfa5e6",
+    "mtime": 1792680999.2144039,
+    "seen": 1792681027.0666125,
+    "ast_hash": "291e7cfc571680be50d7be5e147f5380",
     "semantic_hash": ""
   },
   "SECURITY.md": {
-    "mtime": 1792664244.7206132,
-    "seen": 1792664779.8282816,
-    "ast_hash": "32cb86c05d13144e5f1000fc4d1fdbbc",
-    "semantic_hash": "32cb86c05d13144e5f1000fc4d1fdbbc"
+    "mtime": 1792678278.939583,
+    "seen": 1792678957.8430424,
+    "ast_hash": "9be157e7e32133188de20eafd8dd33c8",
+    "semantic_hash": ""
   },
   "THIRD_PARTY_NOTICES.md": {
-    "mtime": 1792664244.7216115,
-    "seen": 1792664779.828283,
-    "ast_hash": "be8ef4d92c5d294897d991090ec138b6",
-    "semantic_hash": "be8ef4d92c5d294897d991090ec138b6"
-  },
-  "docs/first-run-checklist.md": {
-    "mtime": 1792664244.7256143,
-    "seen": 1792664779.828285,
-    "ast_hash": "1eeacf50b0e0a3b3bcccbd54237460bd",
-    "semantic_hash": "1eeacf50b0e0a3b3bcccbd54237460bd"
-  },
-  "docs/hermes-telegram.md": {
-    "mtime": 1792666922.7899046,
-    "seen": 1792667031.2405941,
-    "ast_hash": "804e132b2c209529214f32b0156f46c6",
+    "mtime": 1792669724.6385932,
+    "seen": 1792670065.6781182,
+    "ast_hash": "c6f03a9018f2f2dbf244a71d68aac19a",
     "semantic_hash": ""
-  },
-  "docs/hermes-whatsapp.md": {
-    "mtime": 1792666925.063212,
-    "seen": 1792667031.2405963,
-    "ast_hash": "c4364509ce0e5814a9f7f540055b5771",
-    "semantic_hash": ""
-  },
-  "docs/level1-runbook.md": {
-    "mtime": 1792664244.7286587,
-    "seen": 1792664779.82829,
-    "ast_hash": "ba5fbeebc41d52f26519f08b06451dc1",
-    "semantic_hash": "ba5fbeebc41d52f26519f08b06451dc1"
   },
   "docs/local-worker.md": {
-    "mtime": 1792666920.4932399,
-    "seen": 1792667031.2405999,
-    "ast_hash": "98d0dab03d3d2057dd47061364e9975a",
+    "mtime": 1792677696.3420584,
+    "seen": 1792677754.4664915,
+    "ast_hash": "9c27c4731f1ff7fea231367bf2db4b12",
     "semantic_hash": ""
-  },
-  "docs/operator-guide.md": {
-    "mtime": 1792667014.5699742,
-    "seen": 1792667031.2406015,
-    "ast_hash": "3ae625d752a371e5b54d2bc4ccb6950f",
-    "semantic_hash": ""
-  },
-  "docs/phase7-interactive-draft-manager.md": {
-    "mtime": 1792664244.7306497,
-    "seen": 1792664779.8282948,
-    "ast_hash": "4f0039585a0377422d683e0c20ca41d5",
-    "semantic_hash": "4f0039585a0377422d683e0c20ca41d5"
-  },
-  "docs/phase7-pilot-checklist.md": {
-    "mtime": 1792664244.7316515,
-    "seen": 1792664779.8282962,
-    "ast_hash": "f80f094afd330c573321f897427c44fc",
-    "semantic_hash": "f80f094afd330c573321f897427c44fc"
-  },
-  "docs/pilot-checklist.md": {
-    "mtime": 1792664244.7326498,
-    "seen": 1792664779.8282976,
-    "ast_hash": "c2a4658b7223be7900da6e3a9615e49b",
-    "semantic_hash": "c2a4658b7223be7900da6e3a9615e49b"
-  },
-  "docs/release-checklist.md": {
-    "mtime": 1792664244.73365,
-    "seen": 1792664779.8282993,
-    "ast_hash": "983714981a16b03c5d664a40e3ff4e5f",
-    "semantic_hash": "983714981a16b03c5d664a40e3ff4e5f"
-  },
-  "docs/release-notes.md": {
-    "mtime": 1792666927.3859472,
-    "seen": 1792667031.2406127,
-    "ast_hash": "8ba3998ac3fb25a19497434ce1b378e5",
-    "semantic_hash": ""
-  },
-  "docs/setup-guide.md": {
-    "mtime": 1792664244.7356482,
-    "seen": 1792664779.8283026,
-    "ast_hash": "b5ddb08ba4ea90bd248829ab67c407ca",
-    "semantic_hash": "b5ddb08ba4ea90bd248829ab67c407ca"
   },
   "docs/troubleshooting.md": {
-    "mtime": 1792664244.7356482,
-    "seen": 1792664779.8283043,
-    "ast_hash": "db1d185baef9e4e127197049e8b89e37",
-    "semantic_hash": "db1d185baef9e4e127197049e8b89e37"
-  },
-  "docs/whatsapp-business-api.md": {
-    "mtime": 1792664244.7366545,
-    "seen": 1792664779.828306,
-    "ast_hash": "c0cbf96d4545224fc207b3b0e4f699ea",
-    "semantic_hash": "c0cbf96d4545224fc207b3b0e4f699ea"
-  },
-  "docs/whatsapp-business-setup.md": {
-    "mtime": 1792664244.7376504,
-    "seen": 1792664779.8283076,
-    "ast_hash": "36993a7223355288b3ac41d2b5150fc4",
-    "semantic_hash": "36993a7223355288b3ac41d2b5150fc4"
-  },
-  "docs/whatsapp-business-troubleshooting.md": {
-    "mtime": 1792664244.7386498,
-    "seen": 1792664779.8283093,
-    "ast_hash": "d49e3b65e567095d4a48374545547100",
-    "semantic_hash": "d49e3b65e567095d4a48374545547100"
-  },
-  "hermes/skills/social-media/facebook-group-post/SKILL.md": {
-    "mtime": 1792666948.1561308,
-    "seen": 1792667031.2406244,
-    "ast_hash": "b6a00a3229f0f5dbccbbaeb5ae4a2140",
+    "mtime": 1792669861.1281037,
+    "seen": 1792670065.6781218,
+    "ast_hash": "c1c0b10336b879daf28eed0ca52e1d68",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-group-post/examples/telegram-flow.md": {
-    "mtime": 1792664244.7471697,
-    "seen": 1792664779.8283124,
-    "ast_hash": "ce32c69b537338c9a599bc2b3629cb35",
-    "semantic_hash": "ce32c69b537338c9a599bc2b3629cb35"
-  },
-  "hermes/skills/social-media/facebook-group-post/examples/whatsapp-flow.md": {
-    "mtime": 1792664244.748917,
-    "seen": 1792664779.8283138,
-    "ast_hash": "b6005ffddb584976b21daff1cdce7947",
-    "semantic_hash": "b6005ffddb584976b21daff1cdce7947"
-  },
   "person-post.js": {
-    "mtime": 1792666135.2245104,
-    "seen": 1792666377.8748415,
-    "ast_hash": "e23b1aa8eee823877a8547017f4d1bfa",
+    "mtime": 1792679587.7997253,
+    "seen": 1792679738.1577997,
+    "ast_hash": "b3063c98ab8767e510ce9d797a12a58c",
     "semantic_hash": ""
   },
   "src/personal-profile.js": {
@@ -462,21 +246,15 @@
     "semantic_hash": ""
   },
   "src/post-flow.js": {
-    "mtime": 1792666139.4890778,
-    "seen": 1792666377.874878,
-    "ast_hash": "ff94de21986348948c2ac638cc03ec29",
+    "mtime": 1792680895.2096684,
+    "seen": 1792681027.0665457,
+    "ast_hash": "0879ba1e9fe4536b82572cf0b93ee68a",
     "semantic_hash": ""
   },
   "tests/person-post.test.js": {
-    "mtime": 1792666300.9929364,
-    "seen": 1792666377.8749115,
-    "ast_hash": "f73bf01d5162fe30c67d1508f7f9e0a9",
-    "semantic_hash": ""
-  },
-  "docs/person-post.md": {
-    "mtime": 1792666918.1857016,
-    "seen": 1792667031.2406034,
-    "ast_hash": "03d2646fa84c2d563b4f0605c65162e5",
+    "mtime": 1792679590.783279,
+    "seen": 1792679738.158086,
+    "ast_hash": "4ac70ff7087cb0196c7ee75e391e1f04",
     "semantic_hash": ""
   },
   "tests/vitest.config.js": {
@@ -491,40 +269,46 @@
     "ast_hash": "7833c0c473ad08441857c9581fe61603",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-person-post/examples/dry-run-worker-job.json": {
-    "mtime": 1792666789.3708951,
-    "seen": 1792667031.2404556,
-    "ast_hash": "3d5ccb491230539cc7b1eab313d0c406",
+  "src/browser-session.js": {
+    "mtime": 1792669653.2203493,
+    "seen": 1792670065.6780243,
+    "ast_hash": "30b79040fe102db16dc6b9cfe3456553",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-person-post/examples/live-worker-job.json": {
-    "mtime": 1792666789.3708951,
-    "seen": 1792667031.2404578,
-    "ast_hash": "d066fbc1ae2888750f98ef50594f6410",
+  "tests/browser-session.test.js": {
+    "mtime": 1792669623.9731293,
+    "seen": 1792670065.6780648,
+    "ast_hash": "e6cf48efd770ba82053346f47e655b90",
     "semantic_hash": ""
   },
-  "tests/hermes-person.test.js": {
-    "mtime": 1792666950.5740597,
-    "seen": 1792667031.2405193,
-    "ast_hash": "9c7b200e05754121fed76b8bd6b08156",
+  "tests/job.test.js": {
+    "mtime": 1792669724.6350987,
+    "seen": 1792670065.6780686,
+    "ast_hash": "8385a1c07fabcc5944266017a64d2018",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-person-post/SKILL.md": {
-    "mtime": 1792666910.109886,
-    "seen": 1792667031.2406304,
-    "ast_hash": "72c99dfd2f0935fe5d188b97b73ce924",
+  "skills/facebook-post/SKILL.md": {
+    "mtime": 1792680980.9551976,
+    "seen": 1792681027.066624,
+    "ast_hash": "06c8be86c2bbd829e69f54e0b9750b43",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-person-post/examples/telegram-flow.md": {
-    "mtime": 1792666810.448687,
-    "seen": 1792667031.2406352,
-    "ast_hash": "0af8cce0968a9e495307234d8d3c5e7f",
+  "tests/post-outcome.test.js": {
+    "mtime": 1792680914.2791674,
+    "seen": 1792681027.0665753,
+    "ast_hash": "342d4da315e8241a2820c899f654a63c",
     "semantic_hash": ""
   },
-  "hermes/skills/social-media/facebook-person-post/examples/whatsapp-flow.md": {
-    "mtime": 1792666812.6236246,
-    "seen": 1792667031.2406368,
-    "ast_hash": "c765c3da9e7bdbf838f82ac8f2fedfb0",
+  "post-tabs.js": {
+    "mtime": 1792680230.9411287,
+    "seen": 1792680274.8206449,
+    "ast_hash": "8d0ced6f6282a2a5ffbcb947d5d52e25",
+    "semantic_hash": ""
+  },
+  "tests/post-tabs.test.js": {
+    "mtime": 1792680250.5739353,
+    "seen": 1792680274.8208172,
+    "ast_hash": "fe11f75db1fad1d6f0e428291506e36a",
     "semantic_hash": ""
   }
 }
