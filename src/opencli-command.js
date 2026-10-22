@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 export const OPENCLI_RECOVERY_STEPS = [
   'Run: npm install',
@@ -78,6 +79,16 @@ export function describeOpenCliResolution(resolution) {
 }
 
 export function defaultRunCommand(command, args, options = {}) {
+  // Invoke Node directly on Windows: .cmd shims cannot be spawned without a
+  // shell, and captions must remain literal arguments (never shell code).
+  if (process.platform === 'win32' && (command === 'opencli' || /[\\/]\.bin[\\/]opencli(?:\.cmd)?$/i.test(command))) {
+    try {
+      args = [fileURLToPath(import.meta.resolve('@jackwener/opencli')), ...args];
+      command = process.execPath;
+    } catch (error) {
+      return { status: 1, output: `Could not resolve installed OpenCLI: ${error.message}` };
+    }
+  }
   const result = spawnSync(command, args, {
     cwd: options.cwd,
     encoding: 'utf8',

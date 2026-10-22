@@ -20,18 +20,22 @@ afterEach(() => {
 });
 
 describe('packaging, pilot, and release docs', () => {
-  it('keeps README as a short landing guide with local-first daily flow', () => {
+  it('documents installation, both posting targets, Hermes and verification in README', () => {
     const readme = fs.readFileSync(path.resolve('README.md'), 'utf8');
-    expect(readme).toContain('Local-first Facebook group posting');
+    expect(readme).toContain('opencli facebook person-post');
+    expect(readme).toContain('opencli facebook group-post');
+    expect(readme).toContain('file://$($PWD.Path)');
+    expect(readme).toContain('opencli profile list');
     expect(readme).toContain('docs/hermes-telegram.md');
     expect(readme).toContain('docs/first-run-checklist.md');
     expect(readme).toContain('docs/pilot-checklist.md');
     expect(readme).toContain('docs/release-checklist.md');
-    expect(readme).toContain('No cloud browser automation');
-    expect(readme).toContain('No unattended live posting');
-    expect(readme).toContain('No scheduler or queue');
-    expect(readme).toContain('No Facebook password, cookie, token, session, or credential collection');
-    expect(readme).toContain('Reply POST to publish or CANCEL to discard');
+    expect(readme).toContain('không tự đăng lại');
+    expect(readme).toContain('Không có scheduler, queue');
+    expect(readme).toContain('Không thu thập mật khẩu/cookie/session Facebook');
+    expect(readme).toContain('`POST`: đăng một lần');
+    expect(readme).toContain('`CANCEL`: hủy xác nhận');
+    expect(readme).toContain('gateway Telegram/WhatsApp thật');
     expect(readme).toContain('npm run package');
     expect(readme).toContain('npm run package:local');
     expect(readme).toContain('node scripts/package-local.js --dry-run');

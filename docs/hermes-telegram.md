@@ -1,5 +1,19 @@
 # Hermes Telegram Setup
 
+The installer now includes both `facebook-group-post` and `facebook-person-post`.
+For a personal post, send Hermes:
+
+```text
+Use the facebook-person-post skill.
+Prepare one personal Facebook post, profile xmqguda9, slow mode.
+Caption: This is my personal draft.
+NO IMAGES. Dry-run only.
+```
+
+After the preview, reply `POST` in the same conversation to publish once, or `CANCEL`
+to clear confirmation. Attachments must first be saved locally by the gateway.
+See [the personal skill example](../hermes/skills/social-media/facebook-person-post/examples/telegram-flow.md).
+
 Telegram is the recommended messaging channel because Hermes can poll Telegram directly. No public webhook or tunnel is required.
 
 ## Install Hermes

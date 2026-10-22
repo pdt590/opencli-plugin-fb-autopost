@@ -1,6 +1,8 @@
 # Local Posting Worker
 
-The local posting worker is the machine-friendly wrapper for Hermes. It reads one local JSON job, validates it, resolves a configured group alias, then calls the existing OpenCLI command:
+The local posting worker is the machine-friendly wrapper for Hermes. It reads one local JSON job,
+validates it and selects `group-post` (default) or `person-post` using `target`.
+Group jobs can resolve a configured approved group alias:
 
 ```sh
 opencli facebook group-post
@@ -9,6 +11,30 @@ opencli facebook group-post
 The worker does not add scheduling, queues, analytics, retries, network services, cloud browser automation, or credential handling.
 
 ## Job Shape
+
+Personal-profile job (no group configuration required):
+
+```json
+{
+  "target": "person",
+  "mode": "dry-run",
+  "profile": "xmqguda9",
+  "slow": true,
+  "caption": "Personal draft supplied in Telegram or WhatsApp",
+  "images": []
+}
+```
+
+`target` accepts `group` or `person`; omitted means `group` for existing jobs. Optional
+`profile` selects the OpenCLI browser context (ID or alias using letters/digits/dot/
+underscore/hyphen). Hermes skills request an explicit profile to avoid account ambiguity.
+Optional `slow` is boolean and forwards `--slow true` when enabled. Group jobs accept
+these fields too. Personal jobs reject group selectors and `profileUrl`, navigate to
+the selected personal identity's `/me`, and return `profile_url` instead of `group_url`.
+Their default artifact directory is `artifacts/facebook-person-post`. Both job types
+require explicit live mode and the worker confirm flag. Conversation-level POST/CANCEL
+validation belongs to the Hermes skill; the worker does not independently track a
+successful prior dry-run or chat approval. OpenCLI 2.x JSON envelopes are unwrapped.
 
 Dry-run job:
 

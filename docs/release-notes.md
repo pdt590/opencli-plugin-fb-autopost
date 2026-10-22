@@ -1,5 +1,25 @@
 # Release Notes
 
+## Unreleased - Personal Profile Posting
+
+- Add the Hermes `facebook-person-post` skill for Telegram/WhatsApp gateways, with
+  worker `target`, browser `profile`, slow input and explicit dry-run/POST/CANCEL flow.
+- Install both skills by default; `--skill` can select one. Existing group jobs remain
+  compatible. Worker results now support OpenCLI 2.x JSON envelopes and Windows
+  invokes OpenCLI through Node without shell interpolation of captions.
+
+- Add optional `--slow true` to both posting commands for Unicode-safe chunked caption
+  input, fixed pauses and a security check after preparation. Interrupted input stops
+  without fallback/retry. No bot-detection avoidance is guaranteed.
+
+- Add `opencli facebook person-post` with caption/file, local images, screenshots,
+  dry-run by default and explicit `--confirm true` publishing.
+- Verify the selected Facebook personal identity after `/me` navigation.
+- Share the caption/image/post flow with `group-post`; group worker and messaging
+  behavior remains unchanged.
+- Include the adapter in local packages and allow OpenCLI 2.x hosts.
+- Add personal-post tests and Windows-compatible test transforms/assertions.
+
 ## v0.1.0 - Initial Public Release
 
 Status: initial public release. The local pilot covered installation, Browser Bridge connectivity, dry-run preparation, worker execution, and messaging integration. Live posting remains an explicitly approved, supervised action.

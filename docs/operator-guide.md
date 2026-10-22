@@ -1,5 +1,9 @@
 # Operator Guide
 
+For personal-profile requests from Telegram/WhatsApp, use the `facebook-person-post`
+Hermes skill and select a browser profile. See [the personal posting guide](person-post.md).
+The examples below describe the existing group workflow; both skills use the local worker.
+
 This guide is for the person who will use the system day to day from Telegram or WhatsApp.
 
 The system has three local parts:

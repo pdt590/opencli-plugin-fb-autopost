@@ -7,6 +7,8 @@ export const COMPOSER_TRIGGER_LABELS = [
   'Create a public post',
   'Create post',
   'Start a post',
+  'Bạn đang nghĩ gì',
+  'Tạo bài viết',
   '匿名发帖',
   '写点什么',
   '寫點什麼',
@@ -19,6 +21,8 @@ export const PHOTO_BUTTON_LABELS = [
   'Photo',
   'Add photos/videos',
   'Add photo',
+  'Ảnh/video',
+  'Ảnh/video trực tiếp',
   '照片/视频',
   '照片／影片',
   '添加照片',
@@ -29,6 +33,7 @@ export const POST_BUTTON_LABELS = [
   'Post',
   'Publish',
   'Share',
+  'Đăng',
   '发帖',
   '发布',
   '發布',
@@ -181,6 +186,17 @@ const VERIFY_CAPTION_SCRIPT = `(() => {
   return { verified: text.includes(wanted), text };
 })()`;
 
+const FOCUS_EDITOR_END_SCRIPT = FOCUS_EDITOR_SCRIPT.replace(
+  'editor.focus();',
+  `editor.focus();
+  const range = document.createRange();
+  range.selectNodeContents(editor);
+  range.collapse(false);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);`,
+);
+
 const EXEC_COMMAND_SCRIPT = `(() => {
   ${ACTIVE_DIALOG_HELPERS}
   const dialog = activeDialog();
@@ -328,7 +344,7 @@ export async function openComposer(page, { screenshotDir, timeoutMs = 10000, int
   if (!clicked?.clicked) {
     const screenshot = await captureScreenshot(page, screenshotDir, 'composer-trigger-not-found');
     throw new CommandExecutionError(
-      `Could not find Facebook group composer trigger. UI may have changed. Screenshot: ${screenshot}`,
+      `Could not find Facebook composer trigger. UI may have changed. Screenshot: ${screenshot}`,
     );
   }
 
@@ -348,11 +364,40 @@ export async function openComposer(page, { screenshotDir, timeoutMs = 10000, int
   return { trigger: clicked, dialog };
 }
 
-export async function insertCaption(page, caption, { screenshotDir, timeoutMs = 10000, intervalMs = 250 } = {}) {
+export async function insertCaption(page, caption, { screenshotDir, timeoutMs = 10000, intervalMs = 250, slow = false } = {}) {
   const focused = await page.evaluate(FOCUS_EDITOR_SCRIPT);
   if (!focused?.focused) {
     const screenshot = await captureScreenshot(page, screenshotDir, 'composer-editor-not-found');
     throw new CommandExecutionError(`Could not focus Facebook composer editor. Screenshot: ${screenshot}`);
+  }
+
+  if (slow) {
+    if (typeof page.insertText !== 'function' || String(focused.text || '').trim()) {
+      const screenshot = await captureScreenshot(page, screenshotDir, 'paced-input-not-ready');
+      throw new CommandExecutionError(`Paced input requires insertText support and an empty editor; discard any existing draft first. Screenshot: ${screenshot}`);
+    }
+    // Segment by grapheme so Vietnamese combining marks and emoji stay intact.
+    const units = Array.from(new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(caption), part => part.segment);
+    try {
+      for (let index = 0; index < units.length; index += 12) {
+        if (index > 0) {
+          await delay(200);
+          // React editors can restore a stale selection between insertions.
+          // Append at the visible editor's end after each rendering pause.
+          const caret = await page.evaluate(FOCUS_EDITOR_END_SCRIPT);
+          if (!caret?.focused) throw new Error('Composer editor disappeared');
+        }
+        await page.insertText(units.slice(index, index + 12).join(''));
+      }
+    } catch {
+      const screenshot = await captureScreenshot(page, screenshotDir, 'paced-input-interrupted');
+      throw new CommandExecutionError(`Paced input stopped after an interrupted insert. Review the partial draft manually; no fallback or retry was attempted. Screenshot: ${screenshot}`);
+    }
+    if (await captionVerified(page, caption, { timeoutMs, intervalMs })) {
+      return { inserted: true, method: 'paced-insertText' };
+    }
+    const screenshot = await captureScreenshot(page, screenshotDir, 'paced-caption-not-verified');
+    throw new CommandExecutionError(`Paced caption was not verified. Review the draft manually; no fallback or retry was attempted. Screenshot: ${screenshot}`);
   }
 
   if (typeof page.insertText === 'function') {

@@ -6,5 +6,8 @@
     "/absolute/local/path/photo-1.jpg",
     "/absolute/local/path/photo-2.jpg"
   ],
-  "screenshotDir": "./artifacts/facebook-group-post"
+  "screenshotDir": "./artifacts/facebook-group-post",
+  "target": "group",
+  "profile": "xmqguda9",
+  "slow": true
 }

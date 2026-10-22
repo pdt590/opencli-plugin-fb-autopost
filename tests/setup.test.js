@@ -317,7 +317,7 @@ describe('phase 2 repo wiring', () => {
     expect(packageJson.scripts).toMatchObject({
       setup: 'node scripts/setup.js',
       doctor: 'node scripts/doctor.js',
-      test: 'vitest run',
+      test: 'vitest run --config tests/vitest.config.js',
     });
   });
 

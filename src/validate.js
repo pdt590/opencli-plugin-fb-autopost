@@ -85,7 +85,7 @@ export function resolveImages(rawCsv) {
     .filter(Boolean);
 
   if (images.length > MAX_IMAGES) {
-    throw new CommandExecutionError(`Facebook group-post supports at most ${MAX_IMAGES} images`);
+    throw new CommandExecutionError(`Facebook posting supports at most ${MAX_IMAGES} images`);
   }
 
   return images.map((imagePath) => {
@@ -130,6 +130,7 @@ export function resolveInputs(kwargs) {
     images,
     mode,
     screenshotDir,
+    slow: coerceBoolean(readArg(kwargs, 'slow')),
   };
 }
 
@@ -138,4 +139,15 @@ export function readArg(kwargs, hyphenated, camelCase = hyphenated) {
   if (Object.prototype.hasOwnProperty.call(kwargs, hyphenated)) return kwargs[hyphenated];
   if (Object.prototype.hasOwnProperty.call(kwargs, camelCase)) return kwargs[camelCase];
   return undefined;
+}
+
+export function resolvePersonInputs(kwargs) {
+  return {
+    targetUrl: 'https://www.facebook.com/me',
+    slow: coerceBoolean(readArg(kwargs, 'slow')),
+    caption: resolveCaption({ caption: readArg(kwargs, 'caption'), captionFile: readArg(kwargs, 'caption-file', 'captionFile') }),
+    images: resolveImages(readArg(kwargs, 'images')),
+    mode: resolveMode({ dryRun: readArg(kwargs, 'dry-run', 'dryRun'), confirm: readArg(kwargs, 'confirm') }),
+    screenshotDir: readArg(kwargs, 'screenshot-dir', 'screenshotDir') || './artifacts/facebook-person-post',
+  };
 }

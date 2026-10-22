@@ -24,7 +24,7 @@ afterEach(() => {
 
 describe('Hermes facebook-group-post skill', () => {
   it('has valid Hermes skill frontmatter', () => {
-    const content = fs.readFileSync(SKILL_PATH, 'utf8');
+    const content = fs.readFileSync(SKILL_PATH, 'utf8').replace(/\r\n/g, '\n');
     expect(content.startsWith('---\n')).toBe(true);
 
     const closeIndex = content.indexOf('\n---\n', 4);
@@ -33,7 +33,7 @@ describe('Hermes facebook-group-post skill', () => {
     expect(frontmatter.name).toBe('facebook-group-post');
     expect(frontmatter.description).toContain('Telegram or WhatsApp');
     expect(frontmatter.description.length).toBeLessThanOrEqual(1024);
-    expect(frontmatter.version).toBe('1.1.0');
+    expect(frontmatter.version).toBe('1.2.0');
     expect(frontmatter.author).toBe('Ang Jing Kang');
     expect(frontmatter.license).toBe('Apache-2.0');
     expect(content.slice(closeIndex + 5).trim()).toContain('# Facebook Group Post');
@@ -160,9 +160,11 @@ describe('install-hermes-skill script', () => {
     expect(fs.existsSync(path.join(result.target, 'examples', 'whatsapp-flow.md'))).toBe(true);
     expect(fs.existsSync(path.join(result.target, 'examples', 'telegram-flow.md'))).toBe(true);
     expect(fs.readFileSync(path.join(tmpHome, '.hermes', '.env'), 'utf8')).toContain(
-      `FB_AUTOPOST_REPO="${path.resolve('.')}"`,
+      `FB_AUTOPOST_REPO=${JSON.stringify(path.resolve('.'))}`,
     );
-    expect(fs.statSync(path.join(tmpHome, '.hermes', '.env')).mode & 0o777).toBe(0o600);
+    if (process.platform !== 'win32') {
+      expect(fs.statSync(path.join(tmpHome, '.hermes', '.env')).mode & 0o777).toBe(0o600);
+    }
   });
 
   it('refuses to overwrite without force', () => {

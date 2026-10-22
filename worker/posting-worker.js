@@ -12,6 +12,7 @@ import {
   normalizeJob,
 } from '../src/job.js';
 import { resolveOpenCliCommand } from '../src/opencli-command.js';
+import { defaultRunCommand as runOpenCliCommand } from '../src/opencli-command.js';
 import { coerceBoolean } from '../src/validate.js';
 
 const WORKER_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -40,7 +41,8 @@ export function usage() {
     '  node worker/posting-worker.js --job examples/job.dry-run.json',
     '  node worker/posting-worker.js --job examples/job.live.json --confirm true',
     '',
-    'The worker accepts one local JSON job and calls opencli facebook group-post.',
+    'The worker accepts one local JSON job and calls opencli facebook group-post or person-post.',
+    'Optional job fields: target (group|person), profile (OpenCLI context), slow (boolean).',
     'Live jobs require both "mode": "live" in the job and --confirm true on the CLI.',
   ].join('\n');
 }
@@ -105,7 +107,7 @@ export async function runWorker({
 
 export function readJobFile(jobPath, repoRoot = REPO_ROOT) {
   const absolutePath = path.isAbsolute(jobPath) ? jobPath : path.resolve(repoRoot, jobPath);
-  const parsed = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+  const parsed = JSON.parse(fs.readFileSync(absolutePath, 'utf8').replace(/^\uFEFF/, ''));
   return {
     job: parsed,
     jobPath: absolutePath,
@@ -114,6 +116,7 @@ export function readJobFile(jobPath, repoRoot = REPO_ROOT) {
 }
 
 export function defaultRunCommand(command, args, options = {}) {
+  if (process.platform === 'win32') return runOpenCliCommand(command, args, options);
   const result = spawnSync(command, args, {
     cwd: options.cwd,
     encoding: 'utf8',

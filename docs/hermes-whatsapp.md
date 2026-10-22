@@ -24,7 +24,15 @@ The skill is installed to:
 
 ```text
 ~/.hermes/skills/social-media/facebook-group-post/
+~/.hermes/skills/social-media/facebook-person-post/
 ```
+
+For personal posting, ask Hermes to use `facebook-person-post`, provide the chosen
+browser profile (for example `xmqguda9`), caption, attachments or explicit `NO IMAGES`.
+It prepares a dry-run with `slow: true`, returns a preview and waits for `POST` or
+`CANCEL` in that conversation. This uses the Hermes WhatsApp gateway; the separate
+WhatsApp Business Cloud API group menus are unchanged. See
+[the WhatsApp personal example](../hermes/skills/social-media/facebook-person-post/examples/whatsapp-flow.md).
 
 ## Prepare Local Posting
 

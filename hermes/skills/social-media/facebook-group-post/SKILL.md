@@ -1,19 +1,32 @@
 ---
 name: facebook-group-post
 description: "Prepare and explicitly confirm one Facebook group post from a Hermes Telegram or WhatsApp conversation through the local OpenCLI fb-autopost worker. Use for caption and image intake, dry-run review, POST confirmation, or CANCEL."
-version: 1.1.0
+version: 1.2.0
 author: Ang Jing Kang
 license: Apache-2.0
-platforms: [macos, linux]
+platforms: [macos, linux, windows]
 prerequisites:
   commands: [node, opencli]
 metadata:
   hermes:
     tags: [facebook, telegram, whatsapp, social-media, opencli, local-automation]
-    related_skills: []
+    related_skills: [facebook-person-post]
 ---
 
 # Facebook Group Post via Local OpenCLI Worker
+
+For personal-profile posting, use the sibling `facebook-person-post` skill. If the
+destination is ambiguous, ask before preparing a job. These skills operate through
+Hermes Telegram/WhatsApp gateways; the separate WhatsApp Business Cloud API menus
+continue to target groups.
+
+Collect the user's selected OpenCLI browser `profile` ID/alias; ask when unknown
+rather than choosing an arbitrary profile. Include `"target": "group"`, that `profile`
+and `"slow": true` in both dry-run and live jobs (use false if the user requests standard
+input). Old jobs without target remain group jobs. Slow input does not guarantee
+avoidance of Facebook bot detection. Relative caption/image/screenshot paths resolve
+against the job JSON's directory; use absolute local attachment paths when possible.
+The profile `xmqguda9` in examples is a placeholder for the profile selected by the user.
 
 ## Operating Boundary
 
@@ -78,6 +91,9 @@ Shape:
 
 ```json
 {
+  "target": "group",
+  "profile": "xmqguda9",
+  "slow": true,
   "mode": "dry-run",
   "groupAlias": "main",
   "caption": "Caption text from the user",
@@ -112,10 +128,22 @@ Keep exactly one pending draft in the current conversation.
 
 Accept `POST` only when the current conversation has exactly one successful pending dry-run.
 
+Require both `ok: true` and `status: dry-run-ready`. Keep pending state scoped to the
+same user and conversation. Include the chosen browser profile, group, caption, image
+count and screenshot in the preview. Attach the screenshot via the current gateway
+when supported, or report its local path accurately. Changes to target, profile, slow
+setting, caption or attachment contents invalidate confirmation and require a fresh
+dry-run. Preserve the reviewed local attachment files until POST. Copy the reviewed
+job for live execution, changing only mode. Conversation-level POST validation is
+the skill's responsibility; the worker enforces live mode plus the CLI confirm flag.
+
 Create a new live job using the same group, caption, images, and screenshot directory:
 
 ```json
 {
+  "target": "group",
+  "profile": "xmqguda9",
+  "slow": true,
   "mode": "live",
   "groupAlias": "main",
   "caption": "Caption text from the user",
@@ -141,6 +169,11 @@ Report one of:
 - `unknown`
 
 For `failed` or `unknown`, include the screenshot when available, tell the user to check Facebook manually, and do not retry.
+
+Clear pending confirmation after any live attempt. A live invocation creates a new
+composer; it does not resume the preview tab. Have the user discard the prior preview
+manually if Facebook asks. POST after CANCEL or a failed dry-run requires a fresh
+successful dry-run. Do not send unrelated outbound messages.
 
 ## CANCEL
 

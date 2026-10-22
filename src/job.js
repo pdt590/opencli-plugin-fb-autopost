@@ -23,14 +23,27 @@ export function normalizeJob(job, { config, jobDir, repoRoot = process.cwd(), co
     throw new JobValidationError('Live worker jobs require job mode "live" and CLI flag --confirm true');
   }
 
-  const groupUrl = resolveJobGroupUrl(job, config);
+  const target = job.target ?? 'group';
+  if (!['group', 'person'].includes(target)) throw new JobValidationError('Job target must be "group" or "person"');
+  if (target === 'person' && ['group', 'groupUrl', 'group_url', 'groupAlias', 'group_alias', 'profileUrl', 'profile_url'].some(key => Object.hasOwn(job, key))) {
+    throw new JobValidationError('Personal jobs target your own Facebook identity; omit group and profile URL fields');
+  }
+  const profile = job.profile;
+  if (profile !== undefined && (typeof profile !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(profile))) {
+    throw new JobValidationError('Job profile must be an OpenCLI profile ID or alias (letters, digits, dot, underscore, hyphen)');
+  }
+  if (job.slow !== undefined && ![true, false, 'true', 'false'].includes(job.slow)) throw new JobValidationError('Job slow must be true or false');
+  const groupUrl = target === 'group' ? resolveJobGroupUrl(job, config) : undefined;
   const captionSource = resolveJobCaption(job, jobDir);
   const images = resolveJobImages(job.images, jobDir);
   const screenshotDir = resolveJobScreenshotDir(job, { jobDir, repoRoot, config });
 
   return {
     mode,
-    groupUrl,
+    target,
+    ...(target === 'group' ? { groupUrl } : {}),
+    profile,
+    slow: job.slow === true || job.slow === 'true',
     ...captionSource,
     images,
     screenshotDir,
@@ -121,12 +134,15 @@ export function resolveJobScreenshotDir(job, { jobDir = process.cwd(), repoRoot 
   const raw = readJobValue(job, 'screenshotDir', 'screenshot_dir');
   if (raw) return resolveLocalPath(raw, jobDir);
 
-  const settingsDir = config.settings?.artifactsDir || DEFAULT_SETTINGS.artifactsDir;
+  const settingsDir = job.target === 'person' ? './artifacts/facebook-person-post' : config.settings?.artifactsDir || DEFAULT_SETTINGS.artifactsDir;
   return path.resolve(repoRoot, settingsDir);
 }
 
 export function buildOpenCliArgs(job) {
-  const args = ['facebook', 'group-post', '--group-url', job.groupUrl];
+  const args = job.profile ? ['--profile', job.profile] : [];
+  args.push('facebook', job.target === 'person' ? 'person-post' : 'group-post');
+  if (job.target !== 'person') args.push('--group-url', job.groupUrl);
+  if (job.slow) args.push('--slow', 'true');
 
   if (job.captionFile) {
     args.push('--caption-file', job.captionFile);
@@ -158,7 +174,7 @@ export function buildWorkerResult({ job, opencliResult }) {
     ok,
     status: row?.status || (opencliResult.status === 0 ? 'unknown' : 'failed'),
     mode: job.mode,
-    group_url: row?.group_url || job.groupUrl,
+    ...(job.target === 'person' ? { profile_url: row?.profile_url || null } : { group_url: row?.group_url || job.groupUrl }),
     message: row?.message || opencliResult.output?.trim() || 'OpenCLI command finished without JSON output.',
     caption_length: row?.caption_length ?? job.captionLength,
     image_count: row?.image_count ?? job.images.length,
@@ -182,6 +198,8 @@ export function parseOpenCliRow(output = '') {
   if (!jsonText) return null;
   try {
     const parsed = JSON.parse(jsonText);
+    if (parsed?.ok === false) return { status: 'failed', message: parsed.error?.message || 'OpenCLI reported an error' };
+    if (parsed?.ok === true && Object.hasOwn(parsed, 'data')) return Array.isArray(parsed.data) ? parsed.data[0] || null : parsed.data;
     if (Array.isArray(parsed)) return parsed[0] || null;
     if (parsed && typeof parsed === 'object') return parsed;
     return null;

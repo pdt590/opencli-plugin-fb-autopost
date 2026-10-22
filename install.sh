@@ -5,6 +5,7 @@ if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
   cat <<'HELP'
 Usage:
   ./install.sh "https://www.facebook.com/groups/<APPROVED_GROUP_ID>" [group-alias]
+  ./install.sh --person
 
 macOS-first local installer. It installs npm dependencies, runs setup,
 installs the Hermes skill, and prints the next manual browser/Telegram steps.
@@ -17,6 +18,10 @@ fi
 
 GROUP_URL="${1:-}"
 GROUP_ALIAS="${2:-main}"
+PERSON_ONLY=false
+if [ "$GROUP_URL" = "--person" ]; then
+  PERSON_ONLY=true
+fi
 
 if [ -z "$GROUP_URL" ]; then
   echo "Missing approved Facebook group URL."
@@ -36,6 +41,16 @@ fi
 
 echo "Installing local dependencies..."
 npm install
+
+if [ "$PERSON_ONLY" = true ]; then
+  echo "Installing personal and group posting commands (no group configuration required)..."
+  npx opencli plugin install "file://$(pwd)"
+  npx opencli facebook person-post --help
+  node scripts/install-hermes-skill.js --skill facebook-person-post --force
+  echo "Next: opencli profile list"
+  echo 'Prepare only: opencli --profile <profile> facebook person-post --caption "My draft" --dry-run true --keep-tab true'
+  exit 0
+fi
 
 echo "Running local setup..."
 npm run setup -- --group-url "$GROUP_URL" --group-alias "$GROUP_ALIAS"

@@ -1,7 +1,7 @@
 {
   "name": "opencli-plugin-fb-autopost",
   "version": "0.1.0",
-  "description": "OpenCLI plugin for preparing Facebook group posts with explicit-confirm publishing.",
+  "description": "OpenCLI plugin for Facebook group and personal profile posts with explicit-confirm publishing.",
   "license": "Apache-2.0",
   "author": "Ang Jing Kang",
   "repository": {
@@ -23,7 +23,7 @@
     "package:local": "node scripts/package-local.js",
     "whatsapp-business": "node whatsapp-business/server.js",
     "whatsapp-business:dry-run": "node whatsapp-business/server.js --dry-run",
-    "test": "vitest run"
+    "test": "vitest run --config tests/vitest.config.js"
   },
   "engines": {
     "node": ">=20"
