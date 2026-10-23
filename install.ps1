@@ -26,8 +26,7 @@ try {
     Invoke-Checked 'npm.cmd' @('ci', '--include=dev')
     Invoke-Checked 'npm.cmd' @('test')
     Invoke-Checked 'npm.cmd' @('run', 'package')
-    $pluginUri = ([System.Uri]($PSScriptRoot + [IO.Path]::DirectorySeparatorChar)).AbsoluteUri
-    Invoke-Checked 'npx.cmd' @('--no-install', 'opencli', 'plugin', 'install', $pluginUri)
+    Invoke-Checked 'node.exe' @('scripts/install-plugin.js')
     Invoke-Checked 'npx.cmd' @('--yes', 'skills', 'add', '.', '--skill', 'social-autopost', '-a', 'hermes-agent', '-g', '--copy', '-y')
     if ($GroupUrl) {
         Invoke-Checked 'npm.cmd' @('run', 'setup', '--', '--group-url', $GroupUrl, '--group-alias', $GroupAlias, '--skip-plugin-install')

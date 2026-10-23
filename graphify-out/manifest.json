@@ -6,9 +6,9 @@
     "semantic_hash": "5ebef3dd159986e465ab65e4014107ec"
   },
   "install.sh": {
-    "mtime": 1792724397.905995,
-    "seen": 1792724410.167591,
-    "ast_hash": "779368a28561c302def1231e52d25e13",
+    "mtime": 1792740581.4754832,
+    "seen": 1792740632.2297382,
+    "ast_hash": "72b4369be8bf2591425ac791d4ebbb5d",
     "semantic_hash": ""
   },
   "opencli-plugin.json": {
@@ -228,9 +228,9 @@
     "semantic_hash": ""
   },
   "install.ps1": {
-    "mtime": 1792724397.9049997,
-    "seen": 1792724410.1675882,
-    "ast_hash": "d31fccbaf13ee92b0d184c101e0c4578",
+    "mtime": 1792740584.2705145,
+    "seen": 1792740632.2297304,
+    "ast_hash": "a514cd01ed84f0b7e7927ce1731f8db8",
     "semantic_hash": ""
   },
   "uninstall.ps1": {
@@ -300,15 +300,21 @@
     "semantic_hash": ""
   },
   "scripts/patch-opencli.js": {
-    "mtime": 1792739977.8152204,
-    "seen": 1792740011.3534498,
-    "ast_hash": "ad84a5ea7c0a712e8f27e3e9ed07e70b",
+    "mtime": 1792740549.6048818,
+    "seen": 1792740632.2298012,
+    "ast_hash": "6f56268bbee9de817016a8b4d1065ee9",
     "semantic_hash": ""
   },
   "tests/opencli-host-link.test.js": {
-    "mtime": 1792739957.6497803,
-    "seen": 1792740011.3535316,
-    "ast_hash": "e3a62e760091a6b316a80e9d47628d49",
+    "mtime": 1792740551.6571524,
+    "seen": 1792740632.229894,
+    "ast_hash": "a1037f41c9b2dfe721adf421719f8a0c",
+    "semantic_hash": ""
+  },
+  "scripts/install-plugin.js": {
+    "mtime": 1792740642.6164258,
+    "seen": 1792740690.136055,
+    "ast_hash": "c486e308cc8c3507cc67c7d1d1fcef93",
     "semantic_hash": ""
   }
 }

@@ -16,6 +16,14 @@ it('keeps a repo-local host intact across repeated plugin links', () => {
     fs.copyFileSync('node_modules/@jackwener/opencli/dist/src/plugin-runtime.js', path.join(dir, 'plugin-runtime.js'));
     fs.writeFileSync(path.join(dir, 'errors.js'), 'export const getErrorMessage = e => e.message;');
     fs.writeFileSync(path.join(dir, 'logger.js'), 'export const log = { debug() {}, warn() {} };');
+    fs.writeFileSync(path.join(dir, 'plugin.js'), `
+      import fs from 'node:fs';
+      import path from 'node:path';
+      import { resolveHostOpencliRoot } from './plugin-runtime.js';
+      export function installDependencies(dir) {
+        throw new Error('Would prune the running host');
+      }
+    `);
     patchOpencli(root);
     patchOpencli(root);
     const result = spawnSync(process.execPath, ['--input-type=module', '-e', `
@@ -24,6 +32,9 @@ it('keeps a repo-local host intact across repeated plugin links', () => {
       assert.equal(linkHostOpencli(${JSON.stringify(root)}), true);
       assert.equal(linkHostOpencli(${JSON.stringify(root)}), true);
       assert.equal(resolveHostOpencliRoot(), ${JSON.stringify(host)});
+      const { installDependencies } = await import(${JSON.stringify(pathToFileURL(path.join(dir, 'plugin.js')).href)});
+      installDependencies(${JSON.stringify(root)});
+      assert.throws(() => installDependencies(${JSON.stringify(path.join(root, 'other-plugin'))}), /Would prune/);
       assert.equal(linkHostOpencli(${JSON.stringify(path.join(root, 'other-plugin'))}), true);
     `], { encoding: 'utf8' });
     expect(result.stderr).toBe('');

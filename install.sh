@@ -15,9 +15,7 @@ node -e 'const [a,b]=process.versions.node.split(".").map(Number); if(a<22 || (a
 npm ci --include=dev
 npm test
 npm run package
-# Node generates the correct file URI on both Windows (including spaces) and Linux.
-plugin_uri="$(node --input-type=module -e 'import {pathToFileURL} from "node:url"; console.log(pathToFileURL(process.cwd()).href)')"
-npx --no-install opencli plugin install "$plugin_uri"
+node scripts/install-plugin.js
 npx --yes skills add . --skill social-autopost -a hermes-agent -g --copy -y
 if [[ -n "${1:-}" ]]; then
   npm run setup -- --group-url "$1" --group-alias "${2:-main}" --skip-plugin-install
