@@ -270,15 +270,15 @@
     "semantic_hash": ""
   },
   "src/post-clone.js": {
-    "mtime": 1792729483.1573057,
-    "seen": 1792729506.706357,
-    "ast_hash": "10478f76e39a55a5f96269f0bba7210d",
+    "mtime": 1792739409.1206412,
+    "seen": 1792739425.5337486,
+    "ast_hash": "203c4f037631063f3261f0fd89fbe50e",
     "semantic_hash": ""
   },
   "tests/post-clone.test.js": {
-    "mtime": 1792729483.1604583,
-    "seen": 1792729506.706376,
-    "ast_hash": "a21e5d18dbacd198756a512e59925583",
+    "mtime": 1792739395.2862175,
+    "seen": 1792739425.533768,
+    "ast_hash": "9d7a369c0c368386ed978176b3296c67",
     "semantic_hash": ""
   },
   "tests/post-group.test.js": {
@@ -291,6 +291,12 @@
     "mtime": 1792729483.193782,
     "seen": 1792729506.7063816,
     "ast_hash": "50b9452670619b42556bcfbb557cadbb",
+    "semantic_hash": ""
+  },
+  "tests/facebook-reader.test.js": {
+    "mtime": 1792731726.8228185,
+    "seen": 1792732101.3151808,
+    "ast_hash": "8d9af9086d4527bb09a0e31da148ab70",
     "semantic_hash": ""
   }
 }
