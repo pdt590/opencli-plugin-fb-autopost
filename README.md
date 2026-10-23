@@ -1,6 +1,6 @@
 # OpenCLI Facebook Autopost
 
-Đăng bài lên **trang cá nhân** hoặc **group Facebook** bằng Chrome/Brave trên máy của bạn. Dùng trực tiếp OpenCLI, worker JSON hoặc skill Hermes hợp nhất tại [`skills/facebook-post`](skills/facebook-post/SKILL.md).
+Đăng bài lên **trang cá nhân** hoặc **group Facebook** bằng Chrome/Brave trên máy của bạn. Dùng trực tiếp OpenCLI, worker JSON hoặc skill Hermes hợp nhất tại [`skills/social-autopost`](skills/social-autopost/SKILL.md).
 
 CLI mặc định chỉ kiểm tra bản nháp, không tạo ảnh xem trước (`screenshot: null`). Skill Hermes luôn nhập chậm và tự nhận diện ý định: yêu cầu đăng rõ ràng thì đăng một lần, yêu cầu soạn nháp thì chưa đăng; chỉ hỏi lại khi còn mơ hồ. Không cần gõ `POST` hoặc `CANCEL`. **Skill giữ các tab đăng bài đến khi kiểm tra xong toàn bộ kết quả, rồi đóng đúng các tab tác vụ.** CLI trực tiếp mặc định đóng tab sau từng lần gọi. Screenshot chỉ được lưu cho kết quả đăng hoặc chẩn đoán lỗi. Các tab người dùng đang mở được giữ nguyên.
 
@@ -17,6 +17,33 @@ npm --version
 ```
 
 ## 2. Cài plugin
+
+**Windows PowerShell 5.1 trở lên**, không cần Git Bash:
+
+```powershell
+.\install.ps1
+.\uninstall.ps1
+```
+
+Chạy từng lệnh theo nhu cầu cài hoặc gỡ. Bản PowerShell thực hiện cùng quy trình với Bash: cài dependency, test, đóng gói, cài plugin và skill Hermes; gỡ chỉ plugin/skill. Tùy chọn: `.\install.ps1 -GroupUrl "https://www.facebook.com/groups/<id>" -GroupAlias main`. Xem trợ giúp bằng `-Help`. Nếu chính sách máy chặn script, có thể chạy riêng lệnh này với `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1` (hoặc `uninstall.ps1`); không cần đổi chính sách toàn máy. Cần Node.js ≥22.20, npm và `tar.exe` có trong PATH.
+
+Cài tự động trên **Linux hoặc Windows qua Git Bash** từ checkout đã tải về (cần Node.js ≥22.20, npm và `tar`):
+
+```bash
+bash install.sh
+```
+
+Script tự chuyển đến thư mục repo, cài dependency bằng `npm ci --include=dev`, chạy test, build gói `.tar.gz`, cài plugin bằng OpenCLI trong repo và cài skill Hermes qua `npx skills add`. Không cần cài OpenCLI global. Script không mở Chrome hoặc đăng bài; nếu có lỗi sẽ dừng và báo bước thất bại. Có thể chạy lại để cập nhật. Tùy chọn cấu hình group: `bash install.sh "https://www.facebook.com/groups/<id>" main`.
+
+Gỡ plugin và skill trên cả hai hệ điều hành:
+
+```bash
+bash uninstall.sh
+```
+
+Chỉ gỡ plugin `social-autopost` và skill `social-autopost` của Hermes; giữ mã nguồn, cấu hình, artifacts, dependency và dữ liệu Chrome. Nếu một bước gỡ lỗi, script vẫn thử bước còn lại và trả mã lỗi. Xem trợ giúp bằng `bash install.sh --help` hoặc `bash uninstall.sh --help`. PowerShell cần gọi Bash của Git for Windows, hoặc mở Git Bash để chạy các lệnh trên.
+
+Cài thủ công:
 
 ```sh
 git clone https://github.com/pdt590/opencli-plugin-fb-autopost.git
@@ -47,7 +74,7 @@ opencli facebook person-post --help
 opencli facebook group-post --help
 ```
 
-Plugin có tên `fb-autopost`. Nếu đã cài, kiểm tra đường dẫn trong `plugin list` để chắc đang dùng đúng checkout. Có thể dùng `npx opencli` thay cho `opencli` nếu không cài global.
+Plugin có tên `social-autopost`. Nếu đã cài, kiểm tra đường dẫn trong `plugin list` để chắc đang dùng đúng checkout. Có thể dùng `npx opencli` thay cho `opencli` nếu không cài global.
 
 ## 3. Kết nối trình duyệt và profile
 
@@ -106,19 +133,19 @@ opencli --profile <chosen-id> facebook group-post --group-url "https://www.faceb
 
 ## 6. Skill Hermes và cách cài
 
-Một skill duy nhất: [`skills/facebook-post/SKILL.md`](skills/facebook-post/SKILL.md), hỗ trợ cả trang cá nhân lẫn group. Skill có liên kết tham khảo [bộ skill OpenCLI chính thức](https://github.com/jackwener/OpenCLI/tree/main/skills).
+Một skill duy nhất: [`skills/social-autopost/SKILL.md`](skills/social-autopost/SKILL.md), hỗ trợ cả trang cá nhân lẫn group. Skill có liên kết tham khảo [bộ skill OpenCLI chính thức](https://github.com/jackwener/OpenCLI/tree/main/skills).
 
 **Cài từ checkout hiện tại:**
 
 ```sh
-npx skills add . --skill facebook-post -a hermes-agent -g
+npx skills add . --skill social-autopost -a hermes-agent -g
 hermes skills list
 ```
 
 **Cài từ GitHub sau khi phiên bản mới đã được push:**
 
 ```sh
-npx skills add pdt590/opencli-plugin-fb-autopost --skill facebook-post -a hermes-agent -g
+npx skills add pdt590/opencli-plugin-fb-autopost --skill social-autopost -a hermes-agent -g
 ```
 
 `-g` cài vào Hermes của người dùng. CLI hiện tại trên Windows đã cài vào `%LOCALAPPDATA%/hermes/skills/`; trên hệ thống khác, xem đường dẫn thực tế được CLI in ra (thường `~/.hermes/skills/`). Bỏ `-g` để cài theo project; thêm `--copy` nếu muốn sao chép thay vì liên kết. Đây là cài **skill hướng dẫn**, không thay thế bước cài plugin/OpenCLI ở trên. Không cần publish một package npm riêng.
@@ -126,7 +153,7 @@ npx skills add pdt590/opencli-plugin-fb-autopost --skill facebook-post -a hermes
 Ví dụ yêu cầu cho Hermes:
 
 ```text
-Dùng skill facebook-post.
+Dùng skill social-autopost.
 Chuẩn bị bài đăng Facebook cá nhân.
 Caption: Hôm nay mình hoàn thành một dự án mới 🌿.
 Tự nhận diện ảnh đính kèm nếu có và đăng một lần.
@@ -209,7 +236,7 @@ node scripts/package-local.js --dry-run
 npm run package
 ```
 
-`npm run doctor` còn kiểm tra cấu hình group; nếu chỉ dùng trang cá nhân, ưu tiên `opencli doctor` và `opencli profile list` để kiểm tra kết nối. `npm run package:local` tương đương tạo gói tại `dist/opencli-plugin-fb-autopost-local.tar.gz`.
+`npm run doctor` còn kiểm tra cấu hình group; nếu chỉ dùng trang cá nhân, ưu tiên `opencli doctor` và `opencli profile list` để kiểm tra kết nối. `npm run package:local` tương đương tạo gói tại `dist/social-autopost-local.tar.gz`.
 
 Xem [xử lý sự cố](docs/troubleshooting.md). Gói gồm runtime, test và skill hợp nhất. Chỉ kiểm thử live khi người dùng đã xác nhận; test tự động không chứng minh bài thật đã được xuất bản.
 

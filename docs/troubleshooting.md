@@ -1,4 +1,4 @@
-﻿# Troubleshooting
+# Troubleshooting
 
 - Missing command: run `opencli --version`, `opencli plugin list`, then command `--help`.
 - Disconnected browser: open Chrome/Brave with Browser Bridge, log in manually and run `opencli profile list`.
@@ -9,6 +9,6 @@
 - Checkpoint/CAPTCHA/login/2FA/action block: resolve manually in the selected profile.
 - Task tab not closed: inspect `cleanup_warning`, close only the remaining task tab manually and do not repeat the publication.
 - `unknown`/`failed` after Post: inspect Facebook manually before considering a new action. Do not automatically retry.
-- Missing skill: use `npx skills add . --skill facebook-post -a hermes-agent -g` from this checkout.
+- Missing skill: use `npx skills add . --skill social-autopost -a hermes-agent -g` from this checkout.
 
 The plugin requires OpenCLI 2.x tab APIs (`newTab`, `selectTab`, `closeTab`). Upgrade before posting if those APIs are unavailable.

@@ -26,7 +26,7 @@ describe('local package', () => {
 
 describe('documentation', () => {
   it('has valid local README and skill links', () => {
-    for(const file of ['README.md','skills/facebook-post/SKILL.md']) {
+    for(const file of ['README.md','skills/social-autopost/SKILL.md']) {
       const text=fs.readFileSync(file,'utf8');
       for(const match of text.matchAll(/\]\(([^)]+)\)/g)) {
         if(!/^(https?:|#)/.test(match[1])) expect(fs.existsSync(path.resolve(path.dirname(file),match[1].split('#')[0])),match[1]).toBe(true);

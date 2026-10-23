@@ -388,7 +388,7 @@ function writeImage(name) {
 }
 
 function activeFileInputSelector() {
-  return 'input[type="file"][data-opencli-fb-autopost-file-input="active"]';
+  return 'input[type="file"][data-opencli-social-autopost-file-input="active"]';
 }
 
 function countArgScripts(page, text) {

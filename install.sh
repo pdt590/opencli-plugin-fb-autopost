@@ -1,15 +1,27 @@
-#!/usr/bin/env sh
-set -eu
-# macOS/Linux convenience installer; does not post to Facebook or ask for passwords.
-if [ "${1:-}" = "--help" ]; then
-  echo 'Usage: ./install.sh [approved-group-url] [alias]'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
+  echo 'Usage: bash install.sh [approved-group-url] [alias]'
+  echo 'Linux or Windows Git Bash: install dependencies, test, package, install plugin and Hermes skill.'
   exit 0
 fi
-npm install
-npx opencli plugin install "file://$(pwd)"
-if [ -n "${1:-}" ]; then
+if (( $# > 2 )); then echo 'Too many arguments. Use --help.' >&2; exit 2; fi
+repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+cd -- "$repo_dir"
+for tool in node npm npx tar; do
+  command -v "$tool" >/dev/null || { echo "Missing prerequisite: $tool" >&2; exit 1; }
+done
+node -e 'const [a,b]=process.versions.node.split(".").map(Number); if(a<22 || (a===22 && b<20)) { console.error("Node.js >=22.20 required"); process.exit(1); }'
+npm ci --include=dev
+npm test
+npm run package
+# Node generates the correct file URI on both Windows (including spaces) and Linux.
+plugin_uri="$(node --input-type=module -e 'import {pathToFileURL} from "node:url"; console.log(pathToFileURL(process.cwd()).href)')"
+npx --no-install opencli plugin install "$plugin_uri"
+npx --yes skills add . --skill social-autopost -a hermes-agent -g --copy -y
+if [[ -n "${1:-}" ]]; then
   npm run setup -- --group-url "$1" --group-alias "${2:-main}" --skip-plugin-install
 fi
-echo 'Optional Hermes skill: npx skills add . --skill facebook-post -a hermes-agent -g'
-echo 'Next: opencli profile list'
-echo 'Read README.md before your first dry-run.'
+npx --no-install opencli plugin list
+echo 'Installed social-autopost and social-autopost for Hermes. Package: dist/social-autopost-local.tar.gz'
+echo 'Connect Browser Bridge in your existing Chrome; this script does not launch Chrome or publish posts.'

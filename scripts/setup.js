@@ -203,7 +203,7 @@ export function isNodeVersionSupported(version) {
 }
 
 export function isAlreadyInstalledPluginOutput(output = '') {
-  return /Plugin\s+"?fb-autopost"?\s+is already installed/i.test(String(output));
+  return /Plugin\s+"?social-autopost"?\s+is already installed/i.test(String(output));
 }
 
 export function statusLine(ok, okText, nextStep) {

@@ -23,7 +23,7 @@ describe('setup wizard', () => {
     const runCommand = vi.fn((command, args) => {
       if (command === 'opencli' && args.join(' ') === '--version') return { status: 0, output: 'opencli 1.0.0' };
       if (command === 'opencli' && args.slice(0, 2).join(' ') === 'plugin install') {
-        return { status: 0, output: 'installed fb-autopost' };
+        return { status: 0, output: 'installed social-autopost' };
       }
       return { status: 1, output: 'unexpected command' };
     });
@@ -79,7 +79,7 @@ describe('setup wizard', () => {
       if (command === 'opencli' && args.join(' ') === '--version') return { status: 1, output: 'opencli: command not found' };
       if (command === localCommand && args.join(' ') === '--version') return { status: 0, output: 'opencli 1.0.0' };
       if (command === localCommand && args.slice(0, 2).join(' ') === 'plugin install') {
-        return { status: 0, output: 'installed fb-autopost' };
+        return { status: 0, output: 'installed social-autopost' };
       }
       return { status: 1, output: 'unexpected command' };
     });
@@ -107,7 +107,7 @@ describe('setup wizard', () => {
       if (command === 'opencli' && args.slice(0, 2).join(' ') === 'plugin install') {
         return {
           status: 1,
-          output: `Error: Plugin "fb-autopost" is already installed at ${path.join(tmpDir, '.opencli', 'plugins', 'fb-autopost')}`,
+          output: `Error: Plugin "social-autopost" is already installed at ${path.join(tmpDir, '.opencli', 'plugins', 'social-autopost')}`,
         };
       }
       return { status: 1, output: 'unexpected command' };
@@ -172,7 +172,7 @@ describe('doctor', () => {
     const runCommand = vi.fn((command, args) => {
       const key = `${command} ${args.join(' ')}`;
       if (key === 'opencli --version') return { status: 0, output: 'opencli 1.0.0' };
-      if (key === 'opencli plugin list') return { status: 0, output: 'fb-autopost' };
+      if (key === 'opencli plugin list') return { status: 0, output: 'social-autopost' };
       if (key === 'opencli doctor') return { status: 1, output: 'Browser Bridge is not connected' };
       if (key === 'opencli facebook groups') return { status: 1, output: 'Log in to Facebook' };
       return { status: 1, output: `unexpected ${key}` };
@@ -198,7 +198,7 @@ describe('doctor', () => {
     const runCommand = vi.fn((command, args) => {
       const key = `${command} ${args.join(' ')}`;
       if (key === 'opencli --version') return { status: 0, output: 'opencli 1.0.0' };
-      if (key === 'opencli plugin list') return { status: 0, output: 'fb-autopost' };
+      if (key === 'opencli plugin list') return { status: 0, output: 'social-autopost' };
       if (key === 'opencli doctor') return { status: 0, output: 'ok' };
       if (key === 'opencli facebook groups') {
         return {
@@ -228,7 +228,7 @@ describe('doctor', () => {
     const runCommand = vi.fn((command, args) => {
       const key = `${command} ${args.join(' ')}`;
       if (key === 'opencli --version') return { status: 0, output: 'opencli 1.0.0' };
-      if (key === 'opencli plugin list') return { status: 0, output: 'fb-autopost' };
+      if (key === 'opencli plugin list') return { status: 0, output: 'social-autopost' };
       if (key === 'opencli doctor') return { status: 0, output: 'ok' };
       if (key === 'opencli facebook groups') return { status: 0, output: 'Test Group' };
       return { status: 1, output: `unexpected ${key}` };
@@ -255,7 +255,7 @@ describe('doctor', () => {
       const key = `${command} ${args.join(' ')}`;
       if (key === 'opencli --version') return { status: 1, output: 'opencli: command not found' };
       if (key === `${localCommand} --version`) return { status: 0, output: 'opencli 1.0.0' };
-      if (key === `${localCommand} plugin list`) return { status: 0, output: 'fb-autopost' };
+      if (key === `${localCommand} plugin list`) return { status: 0, output: 'social-autopost' };
       if (key === `${localCommand} doctor`) return { status: 0, output: 'ok' };
       if (key === `${localCommand} facebook groups`) return { status: 0, output: 'Test Group' };
       return { status: 1, output: `unexpected ${key}` };

@@ -1,5 +1,5 @@
 {
-  "name": "fb-autopost",
+  "name": "social-autopost",
   "version": "0.1.0",
   "description": "Prepare Facebook group and personal profile posts in the logged-in browser; dry-run by default.",
   "opencli": ">=1.8.3 <3"

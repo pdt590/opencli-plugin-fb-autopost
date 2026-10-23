@@ -15,7 +15,7 @@ function page({ target = {}, live = false, images = false, security = {}, finalS
     { ...normal, ...security },
     { url: normal.url, hasComposer: true, ownProfile: true, ...target },
     { found: true }, { focused: true },
-    ...(images ? [{ found: true, selector: 'input[type="file"][data-opencli-fb-autopost-file-input="active"]' }] : []),
+    ...(images ? [{ found: true, selector: 'input[type="file"][data-opencli-social-autopost-file-input="active"]' }] : []),
     { ...normal, ...finalSecurity }, ...(live ? [{ status: 'posted', message: 'Composer closed.' }] : []),
   ];
   const args = [{ clicked: true }, { verified: true },

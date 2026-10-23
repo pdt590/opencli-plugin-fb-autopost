@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
 export const DEFAULT_OUT_DIR = 'dist';
-export const PACKAGE_NAME = 'opencli-plugin-fb-autopost-local';
+export const PACKAGE_NAME = 'social-autopost-local';
 
 export function parseArgs(argv) {
   const args = {
@@ -118,6 +118,9 @@ export function packageEntries() {
     'skills',
     'artifacts/.gitkeep',
     'install.sh',
+    'uninstall.sh',
+    'install.ps1',
+    'uninstall.ps1',
   ];
 }
 

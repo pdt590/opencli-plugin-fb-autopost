@@ -1,12 +1,12 @@
 ---
-name: facebook-post
-description: Publish a Facebook personal-profile or group post when the user clearly requests publication using the local OpenCLI fb-autopost plugin. Infer publish, draft and cancel intent from natural language, automatically detect supplied images, and always use slow input without a preview-image step.
+name: social-autopost
+description: Publish a Facebook personal-profile or group post when the user clearly requests publication using the local OpenCLI social-autopost plugin. Infer publish, draft and cancel intent from natural language, automatically detect supplied images, and always use slow input without a preview-image step.
 ---
 
 # Facebook Posting with OpenCLI
 
 Use the user's local Chrome/Brave with Browser Bridge and a manually authenticated
-Facebook session. The installed `fb-autopost` plugin must expose `facebook person-post`
+Facebook session. The installed `social-autopost` plugin must expose `facebook person-post`
 and `facebook group-post`. This skill contains instructions, not the plugin itself.
 If missing, ask for the local repository path and follow its README to install the plugin.
 
@@ -23,13 +23,13 @@ Do not invent Facebook endpoints or bypass the plugin's validation.
 From a checkout containing this skill:
 
 ```sh
-npx skills add . --skill facebook-post -a hermes-agent -g
+npx skills add . --skill social-autopost -a hermes-agent -g
 ```
 
 After the updated repository is pushed to GitHub:
 
 ```sh
-npx skills add pdt590/opencli-plugin-fb-autopost --skill facebook-post -a hermes-agent -g
+npx skills add pdt590/opencli-plugin-fb-autopost --skill social-autopost -a hermes-agent -g
 ```
 
 This installs to the user's Hermes skill directory. It does not install OpenCLI,

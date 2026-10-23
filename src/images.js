@@ -4,7 +4,7 @@ import { CommandExecutionError } from '@jackwener/opencli/errors';
 import { captureScreenshot } from './artifacts.js';
 import { ACTIVE_DIALOG_HELPERS, evaluateWithArgs, PHOTO_BUTTON_LABELS, poll } from './composer.js';
 
-const FILE_INPUT_MARKER = 'data-opencli-fb-autopost-file-input';
+const FILE_INPUT_MARKER = 'data-opencli-social-autopost-file-input';
 const FILE_INPUT_SELECTOR = `input[type="file"][${FILE_INPUT_MARKER}="active"]`;
 
 const FIND_FILE_INPUT_SCRIPT = `(() => {

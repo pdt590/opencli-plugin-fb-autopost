@@ -188,7 +188,7 @@ export function checkArtifactsWritable(repoRoot, settings = {}) {
 export function checkPluginVisible(repoRoot, runCommand = defaultRunCommand, openCliCommand = 'opencli') {
   const pluginList = runCommand(openCliCommand, ['plugin', 'list'], { cwd: repoRoot });
   const listOutput = pluginList.output || '';
-  if (pluginList.status === 0 && /fb-autopost|opencli-plugin-fb-autopost/i.test(listOutput)) {
+  if (pluginList.status === 0 && /social-autopost|opencli-plugin-fb-autopost/i.test(listOutput)) {
     return {
       ok: true,
       label: 'OpenCLI plugin visible',
