@@ -20,13 +20,13 @@
   "keywords": [
     "opencli",
     "facebook",
-		"linkedin",
-		"instagram",
+    "linkedin",
+    "instagram",
     "plugin",
     "hermes"
   ],
   "devDependencies": {
-    "@jackwener/opencli": "2.0.0",
+    "@jackwener/opencli": "2.0.2",
     "vitest": "4.1.8"
   }
 }

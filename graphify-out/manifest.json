@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1792739979.9249177,
-    "seen": 1792740011.3533921,
-    "ast_hash": "f071ae7efcf13bf3c634d8e89dece944",
+    "mtime": 1792744315.6294234,
+    "seen": 1792744368.5315623,
+    "ast_hash": "d9575037910079b61639dc880601fd4d",
     "semantic_hash": ""
   },
   "scripts/doctor.js": {
@@ -156,9 +156,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792743711.7955563,
-    "seen": 1792743724.1640086,
-    "ast_hash": "8076bc94eb00cd01a1d96e81021b3ecf",
+    "mtime": 1792744354.4551294,
+    "seen": 1792744368.5316854,
+    "ast_hash": "29538b9d26dace4125f3a378d83c354a",
     "semantic_hash": ""
   },
   "SECURITY.md": {

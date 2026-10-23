@@ -20,7 +20,7 @@ bash install.sh
 
 Script cài dependency, đóng gói, cài plugin và skill Hermes; không chạy test. Chạy lại để cập nhật. Gỡ bằng `.\uninstall.ps1` hoặc `bash uninstall.sh`; giữ mã nguồn và dữ liệu Chrome.
 
-Nếu gặp `Could not resolve the host OpenCLI package root` sau khi cài bằng OpenCLI local, chạy `npm ci --include=dev` rồi chạy lại `bash install.sh`. Hook `postinstall` sửa lỗi OpenCLI 2.0.0 tự thay thư mục host bằng symlink trỏ về chính nó.
+Nếu gặp `Could not resolve the host OpenCLI package root` sau khi cài bằng OpenCLI local, chạy `npm ci --include=dev` rồi chạy lại `bash install.sh`. Hook `postinstall` bảo vệ host OpenCLI khỏi bị gỡ dependency hoặc thay bằng symlink trỏ về chính nó; áp dụng cho bản 2.0.2 đang dùng.
 
 ## Kết nối Chrome
 
