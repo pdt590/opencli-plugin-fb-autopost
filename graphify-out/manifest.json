@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1792729730.74747,
-    "seen": 1792729755.7833285,
-    "ast_hash": "3ca369bbc8c7897a04f504713785a334",
+    "mtime": 1792739979.9249177,
+    "seen": 1792740011.3533921,
+    "ast_hash": "f071ae7efcf13bf3c634d8e89dece944",
     "semantic_hash": ""
   },
   "scripts/doctor.js": {
@@ -156,9 +156,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1792729742.4603164,
-    "seen": 1792729755.783542,
-    "ast_hash": "eaf53d78326101df06199ba346241e96",
+    "mtime": 1792739982.1182592,
+    "seen": 1792740011.353617,
+    "ast_hash": "59cf4c5254b9aff14ca55b598a636142",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -297,6 +297,18 @@
     "mtime": 1792731726.8228185,
     "seen": 1792732101.3151808,
     "ast_hash": "8d9af9086d4527bb09a0e31da148ab70",
+    "semantic_hash": ""
+  },
+  "scripts/patch-opencli.js": {
+    "mtime": 1792739977.8152204,
+    "seen": 1792740011.3534498,
+    "ast_hash": "ad84a5ea7c0a712e8f27e3e9ed07e70b",
+    "semantic_hash": ""
+  },
+  "tests/opencli-host-link.test.js": {
+    "mtime": 1792739957.6497803,
+    "seen": 1792740011.3535316,
+    "ast_hash": "e3a62e760091a6b316a80e9d47628d49",
     "semantic_hash": ""
   }
 }

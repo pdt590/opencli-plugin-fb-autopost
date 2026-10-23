@@ -2,7 +2,7 @@
   "0": "validate.js",
   "1": "post-flow.js",
   "2": "uninstall.sh script",
-  "3": "post-group.test.js",
+  "3": "vitest",
   "4": "doctor.js",
   "5": "package.json",
   "6": "install.sh script",
@@ -12,7 +12,7 @@
   "10": "package-local.js",
   "11": "ref_node_fs",
   "12": "uninstall.ps1",
-  "13": "setup.js",
+  "13": "ref_node_fs",
   "14": "Graph-first codebase navigation",
   "15": "Independent community extension attribution"
 }
