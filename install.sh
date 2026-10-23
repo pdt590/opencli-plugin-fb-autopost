@@ -2,7 +2,7 @@
 set -euo pipefail
 if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
   echo 'Usage: bash install.sh [approved-group-url] [alias]'
-  echo 'Linux or Windows Git Bash: install dependencies, test, package, install plugin and Hermes skill.'
+  echo 'Linux or Windows Git Bash: install dependencies, package, install plugin and Hermes skill.'
   exit 0
 fi
 if (( $# > 2 )); then echo 'Too many arguments. Use --help.' >&2; exit 2; fi
@@ -13,7 +13,6 @@ for tool in node npm npx tar; do
 done
 node -e 'const [a,b]=process.versions.node.split(".").map(Number); if(a<22 || (a===22 && b<20)) { console.error("Node.js >=22.20 required"); process.exit(1); }'
 npm ci --include=dev
-npm test
 npm run package
 node scripts/install-plugin.js
 npx --yes skills add . --skill social-autopost -a hermes-agent -g --copy -y

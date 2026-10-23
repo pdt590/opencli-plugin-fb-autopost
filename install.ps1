@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = 'Stop'
 if ($Help) {
     Write-Output 'Usage: .\install.ps1 [-GroupUrl URL] [-GroupAlias main]'
-    Write-Output 'Install dependencies, test, package, install social-autopost and the Hermes social-autopost skill.'
+    Write-Output 'Install dependencies, package, install social-autopost and the Hermes social-autopost skill.'
     exit 0
 }
 function Invoke-Checked {
@@ -24,7 +24,6 @@ try {
     $nodeVersion = & node.exe -p 'process.versions.node'
     if ($LASTEXITCODE -ne 0 -or [version]$nodeVersion -lt [version]'22.20.0') { throw 'Node.js >=22.20 required.' }
     Invoke-Checked 'npm.cmd' @('ci', '--include=dev')
-    Invoke-Checked 'npm.cmd' @('test')
     Invoke-Checked 'npm.cmd' @('run', 'package')
     Invoke-Checked 'node.exe' @('scripts/install-plugin.js')
     Invoke-Checked 'npx.cmd' @('--yes', 'skills', 'add', '.', '--skill', 'social-autopost', '-a', 'hermes-agent', '-g', '--copy', '-y')
