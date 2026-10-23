@@ -11,7 +11,7 @@ import { parseGroupUrl } from '../src/validate.js';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
-export const DEFAULT_ARTIFACTS_DIR = './artifacts/facebook-group-post';
+export const DEFAULT_ARTIFACTS_DIR = './artifacts/facebook-post-group';
 export const DEFAULT_GROUP_ALIAS = 'main';
 
 export function parseArgs(argv) {
@@ -49,7 +49,7 @@ export function usage() {
     '  --group-url <url>        Approved Facebook group URL to save locally',
     '  --group-alias <alias>    Friendly local name for the group (default: main)',
     '  --group-label <label>    Human readable group label',
-    '  --artifacts-dir <dir>    Screenshot directory (default: ./artifacts/facebook-group-post)',
+    '  --artifacts-dir <dir>    Screenshot directory (default: ./artifacts/facebook-post-group)',
     '  --dry-run               Print actions without writing files or installing plugin',
     '  --skip-plugin-install   Do not run opencli plugin install',
     '  --yes                   Non-interactive mode; fail if --group-url is missing',
@@ -89,7 +89,7 @@ export async function runSetup({
     stdout.write(`${line}\n`);
   };
 
-  say('OpenCLI Facebook group-post setup');
+  say('OpenCLI Facebook post-group setup');
   say('This setup never posts to Facebook, never logs in for you, and never asks for a Facebook password.');
   say('');
 

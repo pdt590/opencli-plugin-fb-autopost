@@ -20,8 +20,7 @@ Use GitHub private vulnerability reporting when enabled, or contact the reposito
 
 - Facebook credentials remain in the local browser profile.
 - Dry-run is the default.
-- Live mode requires a clear user request to publish and CLI/worker `--confirm true`; no literal confirmation keyword is required.
-- The worker processes one personal profile or group per job.
+- Live mode requires a clear user request to publish and CLI `--confirm true`; no literal confirmation keyword is required.
 - The project does not bypass login, checkpoint, CAPTCHA, 2FA, or blocked states.
 - The project does not include stealth, proxy, fingerprinting, or rate-limit evasion.
 - The project does not retry a failed or unknown live post.

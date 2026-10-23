@@ -10,11 +10,10 @@ https://github.com/jackwener/OpenCLI
 
 This project adds:
 
-- the Facebook `group-post` command
+- the Facebook `post-group` command
 - fail-closed validation and security checks
 - caption and local image browser flows
 - dry-run and explicit live confirmation gates
-- a one-job local worker
 - setup, doctor, packaging, and test tooling
 - a unified Hermes Facebook posting skill
 

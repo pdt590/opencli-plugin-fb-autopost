@@ -2,7 +2,7 @@
   "0": "validate.js",
   "1": "post-flow.js",
   "2": "uninstall.sh script",
-  "3": "posting-worker.js",
+  "3": "ref_node_fs",
   "4": "doctor.js",
   "5": "package.json",
   "6": "install.sh script",
@@ -10,7 +10,9 @@
   "8": "Node 20 CI tests and whitespace checks",
   "9": "Invoke-Checked",
   "10": "package-local.js",
-  "11": "vitest",
+  "11": "ref_node_fs",
   "12": "uninstall.ps1",
-  "14": "Graph-first codebase navigation"
+  "13": "vitest",
+  "14": "Graph-first codebase navigation",
+  "15": "Independent community extension attribution"
 }

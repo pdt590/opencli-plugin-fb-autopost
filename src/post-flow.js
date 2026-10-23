@@ -14,6 +14,7 @@ import {
 import { attachImages } from './images.js';
 import { buildResult } from './result.js';
 import { coerceBoolean, readArg } from './validate.js';
+import { closeTaskSession } from './task-session.js';
 
 export async function runPost(first, second, { resolveInput, verifyTarget, commandName, resultTarget }) {
   const { page, kwargs } = normalizeInvocation(first, second);
@@ -58,8 +59,8 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
       } catch { /* Preserve the original failure if the browser is unavailable. */ }
     }
   } finally {
-    if (ownedTab && !deferClose) {
-      try { await page.closeTab(ownedTab); }
+    if (!deferClose) {
+      try { await closeTaskSession(page, ownedTab); }
       catch (error) { cleanupError = `Task tab cleanup failed: ${error.message}. Close that tab manually; do not repeat the post.`; }
     }
   }

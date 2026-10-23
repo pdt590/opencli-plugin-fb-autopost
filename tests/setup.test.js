@@ -46,7 +46,7 @@ describe('setup wizard', () => {
 
     expect(status).toBe(0);
     expect(JSON.parse(fs.readFileSync(path.join(tmpDir, 'config', 'settings.json'), 'utf8'))).toMatchObject({
-      artifactsDir: './artifacts/facebook-group-post',
+      artifactsDir: './artifacts/facebook-post-group',
       safety: {
         dryRunDefault: true,
         liveRequiresConfirmTrue: true,
@@ -64,10 +64,10 @@ describe('setup wizard', () => {
         },
       ],
     });
-    expect(fs.statSync(path.join(tmpDir, 'artifacts', 'facebook-group-post')).isDirectory()).toBe(true);
+    expect(fs.statSync(path.join(tmpDir, 'artifacts', 'facebook-post-group')).isDirectory()).toBe(true);
     expect(runCommand).toHaveBeenCalledWith('opencli', ['--version'], { cwd: tmpDir });
     expect(runCommand).toHaveBeenCalledWith('opencli', ['plugin', 'install', `file://${tmpDir}`], { cwd: tmpDir });
-    expect(runCommand.mock.calls.some(([, args]) => args.includes('group-post'))).toBe(false);
+    expect(runCommand.mock.calls.some(([, args]) => args.includes('post-group'))).toBe(false);
     expect(output.text()).toContain('never posts to Facebook');
     expect(output.text()).toContain('Log into Facebook manually');
   });
@@ -189,7 +189,7 @@ describe('doctor', () => {
     expect(status).toBe(1);
     expect(output.text()).toContain('[missing] Browser Bridge available. Next: Open Brave or Chrome');
     expect(output.text()).toContain('[missing] Facebook session readable. Next: Log into Facebook manually');
-    expect(runCommand.mock.calls.some(([, args]) => args.includes('group-post'))).toBe(false);
+    expect(runCommand.mock.calls.some(([, args]) => args.includes('post-group'))).toBe(false);
   });
 
   it('points daemon startup failures at daemon recovery before Facebook login recovery', async () => {
@@ -337,7 +337,7 @@ function writeValidLocalConfig(repoRoot) {
   fs.writeFileSync(
     path.join(repoRoot, 'config', 'settings.json'),
     JSON.stringify({
-      artifactsDir: './artifacts/facebook-group-post',
+      artifactsDir: './artifacts/facebook-post-group',
       safety: {
         storesCredentials: false,
       },

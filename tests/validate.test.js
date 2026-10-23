@@ -13,7 +13,7 @@ import {
 let tmpDir;
 
 beforeEach(() => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fb-group-post-'));
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fb-post-group-'));
 });
 
 afterEach(() => {

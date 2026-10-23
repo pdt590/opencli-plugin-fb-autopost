@@ -4,9 +4,9 @@ import { resolveInputs } from './src/validate.js';
 import { runPost, normalizeInvocation } from './src/post-flow.js';
 export { normalizeInvocation } from './src/post-flow.js';
 
-export async function groupPost(first, second) {
+export async function postGroup(first, second) {
   return runPost(first, second, {
-    commandName: 'group-post',
+    commandName: 'post-group',
     resolveInput: kwargs => { const input = resolveInputs(kwargs); return { ...input, targetUrl: input.groupUrl }; },
     verifyTarget: verifyGroupPageLoaded,
     resultTarget: 'groupUrl',
@@ -15,7 +15,7 @@ export async function groupPost(first, second) {
 
 cli({
   site: 'facebook',
-  name: 'group-post',
+  name: 'post-group',
   access: 'write',
   description: 'Prepare a post in a Facebook group (dry-run by default; --confirm true to publish)',
   domain: 'www.facebook.com',
@@ -40,12 +40,12 @@ cli({
     {
       name: 'screenshot-dir',
       type: 'string',
-      default: './artifacts/facebook-group-post',
+      default: './artifacts/facebook-post-group',
       help: 'Artifact directory',
     },
   ],
   columns: ['status', 'mode', 'group_url', 'message', 'caption_length', 'image_count', 'screenshot'],
-  func: groupPost,
+  func: postGroup,
 });
 
-export const __test__ = { groupPost, normalizeInvocation };
+export const __test__ = { postGroup, normalizeInvocation };

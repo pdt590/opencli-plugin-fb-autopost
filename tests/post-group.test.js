@@ -10,11 +10,11 @@ vi.mock('@jackwener/opencli/registry', () => ({
   cli: vi.fn(),
 }));
 
-let groupPost;
+let postGroup;
 let tmpDir;
 
 beforeEach(async () => {
-  ({ groupPost } = await import('../group-post.js'));
+  ({ postGroup } = await import('../post-group.js'));
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fb-flow-'));
 });
 
@@ -79,7 +79,7 @@ function baseArgs(overrides = {}) {
   };
 }
 
-describe('groupPost flow', () => {
+describe('postGroup flow', () => {
   it('prepares a dry-run and never clicks Post', async () => {
     const page = makePage();
     page.__queueEvaluate([
@@ -91,7 +91,7 @@ describe('groupPost flow', () => {
     ]);
     page.__queueEvaluateWithArgs([{ clicked: true }, { verified: true }]);
 
-    const rows = await groupPost(page, baseArgs());
+    const rows = await postGroup(page, baseArgs());
 
     expect(page.goto).toHaveBeenCalledWith('https://www.facebook.com/groups/test', {
       waitUntil: 'load',
@@ -129,7 +129,7 @@ describe('groupPost flow', () => {
       { verified: true },
     ]);
 
-    const rows = await groupPost(page, baseArgs({ images: `${firstImage},${secondImage}` }));
+    const rows = await postGroup(page, baseArgs({ images: `${firstImage},${secondImage}` }));
 
     expect(page.setFileInput).toHaveBeenCalledWith([firstImage, secondImage], activeFileInputSelector());
     expect(page.screenshot).not.toHaveBeenCalled();
@@ -163,7 +163,7 @@ describe('groupPost flow', () => {
       { verified: true },
     ]);
 
-    const rows = await groupPost(page, baseArgs({ images: imagePath }));
+    const rows = await postGroup(page, baseArgs({ images: imagePath }));
 
     expect(page.setFileInput).toHaveBeenCalledWith([imagePath], activeFileInputSelector());
     expect(page.__argScripts.some((script) => script.includes('new DataTransfer()'))).toBe(true);
@@ -191,7 +191,7 @@ describe('groupPost flow', () => {
       { clicked: true, label: 'post' },
     ]);
 
-    const rows = await groupPost(page, baseArgs({ confirm: true }));
+    const rows = await postGroup(page, baseArgs({ confirm: true }));
 
     expect(rows[0]).toMatchObject({
       status: 'posted',
@@ -221,7 +221,7 @@ describe('groupPost flow', () => {
       { clicked: true, label: 'post' },
     ]);
 
-    const rows = await groupPost(page, baseArgs({ images: imagePath, confirm: true }));
+    const rows = await postGroup(page, baseArgs({ images: imagePath, confirm: true }));
 
     expect(rows[0]).toMatchObject({
       status: 'pending-review',
@@ -252,7 +252,7 @@ describe('groupPost flow', () => {
     ]);
     page.__queueEvaluateWithArgs([{ clicked: true }, { verified: true }]);
 
-    await expect(groupPost(page, baseArgs({ confirm: true }))).rejects.toThrow(/blocked/);
+    await expect(postGroup(page, baseArgs({ confirm: true }))).rejects.toThrow(/blocked/);
     expect(page.evaluate).toHaveBeenCalled();
     expect(page.screenshot).toHaveBeenCalled();
   });
@@ -275,7 +275,7 @@ describe('groupPost flow', () => {
     ]);
 
     await expect(
-      groupPost(page, baseArgs({
+      postGroup(page, baseArgs({
         images: imagePath,
         confirm: true,
         __timing: {
@@ -293,7 +293,7 @@ describe('groupPost flow', () => {
   it('rejects dry-run and confirm conflict before browser navigation', async () => {
     const page = makePage();
 
-    await expect(groupPost(page, baseArgs({ 'dry-run': true, confirm: true }))).rejects.toThrow(
+    await expect(postGroup(page, baseArgs({ 'dry-run': true, confirm: true }))).rejects.toThrow(
       /either --dry-run true or --confirm true/,
     );
 
@@ -321,7 +321,7 @@ describe('groupPost flow', () => {
     ]);
 
     await expect(
-      groupPost(page, baseArgs({
+      postGroup(page, baseArgs({
         images: imagePath,
         __timing: {
           captionTimeoutMs: 0,

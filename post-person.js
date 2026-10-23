@@ -3,9 +3,9 @@ import { verifyPersonalProfileLoaded } from './src/personal-profile.js';
 import { runPost } from './src/post-flow.js';
 import { resolvePersonInputs } from './src/validate.js';
 
-export async function personPost(first, second) {
+export async function postPerson(first, second) {
   return runPost(first, second, {
-    commandName: 'person-post',
+    commandName: 'post-person',
     resolveInput: resolvePersonInputs,
     verifyTarget: verifyPersonalProfileLoaded,
     resultTarget: 'profileUrl',
@@ -13,7 +13,7 @@ export async function personPost(first, second) {
 }
 
 cli({
-  site: 'facebook', name: 'person-post', access: 'write',
+  site: 'facebook', name: 'post-person', access: 'write',
   description: 'Prepare a post on your personal Facebook profile (dry-run by default; --confirm true to publish)',
   domain: 'www.facebook.com', strategy: Strategy.UI, browser: true,
   defaultWindowMode: 'foreground', defaultFormat: 'json',
@@ -26,8 +26,8 @@ cli({
     { name: 'images', type: 'string', help: 'Comma-separated local image paths, max 10 (jpg/jpeg/png/webp/gif)' },
     { name: 'dry-run', type: 'boolean', default: false, help: 'Prepare composer without clicking Post (default mode)' },
     { name: 'confirm', type: 'boolean', default: false, help: 'Set --confirm true to publish once' },
-    { name: 'screenshot-dir', type: 'string', default: './artifacts/facebook-person-post', help: 'Artifact directory' },
+    { name: 'screenshot-dir', type: 'string', default: './artifacts/facebook-post-person', help: 'Artifact directory' },
   ],
   columns: ['status', 'mode', 'profile_url', 'message', 'caption_length', 'image_count', 'screenshot'],
-  func: personPost,
+  func: postPerson,
 });

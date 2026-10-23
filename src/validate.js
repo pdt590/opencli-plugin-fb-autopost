@@ -122,7 +122,7 @@ export function resolveInputs(kwargs) {
     dryRun: readArg(kwargs, 'dry-run', 'dryRun'),
     confirm: readArg(kwargs, 'confirm'),
   });
-  const screenshotDir = readArg(kwargs, 'screenshot-dir', 'screenshotDir') || './artifacts/facebook-group-post';
+  const screenshotDir = readArg(kwargs, 'screenshot-dir', 'screenshotDir') || './artifacts/facebook-post-group';
 
   return {
     groupUrl,
@@ -148,6 +148,6 @@ export function resolvePersonInputs(kwargs) {
     caption: resolveCaption({ caption: readArg(kwargs, 'caption'), captionFile: readArg(kwargs, 'caption-file', 'captionFile') }),
     images: resolveImages(readArg(kwargs, 'images')),
     mode: resolveMode({ dryRun: readArg(kwargs, 'dry-run', 'dryRun'), confirm: readArg(kwargs, 'confirm') }),
-    screenshotDir: readArg(kwargs, 'screenshot-dir', 'screenshotDir') || './artifacts/facebook-person-post',
+    screenshotDir: readArg(kwargs, 'screenshot-dir', 'screenshotDir') || './artifacts/facebook-post-person',
   };
 }

@@ -58,7 +58,7 @@ export async function runDoctor({
     stdout.write(`${line}\n`);
   };
 
-  say('OpenCLI Facebook group-post doctor');
+  say('OpenCLI Facebook post-group doctor');
   say('This command performs non-posting checks only.');
   say('');
 
@@ -107,7 +107,7 @@ export async function runDoctor({
 
   say('');
   say('Safe first test after all checks pass:');
-  say('npx opencli facebook group-post --group-url "<approved group url>" --caption "Test draft only. Do not publish." --dry-run true');
+  say('npx opencli facebook post-group --group-url "<approved group url>" --caption "Test draft only. Do not publish." --dry-run true');
 
   return checks.every((check) => check.ok) ? 0 : 1;
 }
@@ -196,7 +196,7 @@ export function checkPluginVisible(repoRoot, runCommand = defaultRunCommand, ope
     };
   }
 
-  const help = runCommand(openCliCommand, ['facebook', 'group-post', '--help'], { cwd: repoRoot });
+  const help = runCommand(openCliCommand, ['facebook', 'post-group', '--help'], { cwd: repoRoot });
   return {
     ok: help.status === 0,
     label: 'OpenCLI plugin visible',

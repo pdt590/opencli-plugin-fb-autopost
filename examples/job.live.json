@@ -1,9 +1,0 @@
-{
-  "mode": "live",
-  "groupAlias": "main",
-  "captionFile": "./caption.txt",
-  "images": [
-    "./approved-image.jpg"
-  ],
-  "screenshotDir": "../artifacts/facebook-group-post"
-}

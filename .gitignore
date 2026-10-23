@@ -5,6 +5,7 @@ config/settings.json
 config/groups.json
 coverage/
 dist/
+downloads/
 .DS_Store
 .env
 .env.*

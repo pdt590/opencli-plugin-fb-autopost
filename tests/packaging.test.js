@@ -6,7 +6,7 @@ import { packageEntries, packageLocal, parseArgs } from '../scripts/package-loca
 
 describe('local package', () => {
   it('includes runtime, tests and the unified skill', () => {
-    expect(packageEntries()).toEqual(expect.arrayContaining(['person-post.js','group-post.js','src','worker','skills','tests']));
+    expect(packageEntries()).toEqual(expect.arrayContaining(['post-person.js','post-group.js','src','skills','tests']));
     for (const entry of packageEntries()) expect(fs.existsSync(entry), entry).toBe(true);
   });
   it('previews without invoking tar', () => {

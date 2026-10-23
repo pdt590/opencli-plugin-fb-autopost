@@ -33,11 +33,11 @@ function page({ target = {}, live = false, images = false, security = {}, finalS
 }
 const kwargs = () => ({ caption: 'Personal draft test', 'screenshot-dir': tmpDir });
 
-describe('person-post production flow', () => {
+describe('post-person production flow', () => {
   it('registers a write command and defaults to a reviewable own-profile dry-run', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page();
-    const [result] = await personPost(browser, kwargs());
+    const [result] = await postPerson(browser, kwargs());
     expect(browser.goto).toHaveBeenCalledWith('https://www.facebook.com/me', expect.any(Object));
     expect(browser.insertText).toHaveBeenCalledWith('Personal draft test');
     expect(result).toMatchObject({ status: 'dry-run-ready', mode: 'dry-run', profile_url: 'https://www.facebook.com/test.user/', image_count: 0 });
@@ -48,25 +48,25 @@ describe('person-post production flow', () => {
     expect(result.screenshot).toBeNull();
     expect(browser.evaluate.mock.calls.some(([s]) => String(s).includes('button-not-found-or-disabled'))).toBe(false);
     const { cli } = await import('@jackwener/opencli/registry');
-    expect(cli).toHaveBeenCalledWith(expect.objectContaining({ site: 'facebook', name: 'person-post', access: 'write', browser: true }));
-    expect(cli.mock.calls.find(([cmd]) => cmd.name === 'person-post')[0].args).toContainEqual(expect.objectContaining({ name: 'timeout', default: 600 }));
+    expect(cli).toHaveBeenCalledWith(expect.objectContaining({ site: 'facebook', name: 'post-person', access: 'write', browser: true }));
+    expect(cli.mock.calls.find(([cmd]) => cmd.name === 'post-person')[0].args).toContainEqual(expect.objectContaining({ name: 'timeout', default: 600 }));
     const progress = JSON.parse(fs.readFileSync(path.join(tmpDir, 'progress-owned-tab.json'), 'utf8'));
     expect(progress).toMatchObject({ stage: 'dry-run-ready', submission_may_have_started: false });
   });
   it('attaches local images and rechecks caption before returning dry-run', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const image = path.join(tmpDir, 'test.png'); fs.writeFileSync(image, 'image');
     const browser = page({ images: true });
-    const [result] = await personPost(browser, { ...kwargs(), images: image });
+    const [result] = await postPerson(browser, { ...kwargs(), images: image });
     expect(browser.setFileInput).toHaveBeenCalledWith([image], expect.any(String));
     expect(result).toMatchObject({ status: 'dry-run-ready', image_count: 1 });
     expect(result.screenshot).toBeNull();
     expect(browser.screenshot).not.toHaveBeenCalled();
   });
   it('executes one Post click only with explicit confirmation', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page({ live: true });
-    const [result] = await personPost(browser, { ...kwargs(), confirm: true });
+    const [result] = await postPerson(browser, { ...kwargs(), confirm: true });
     expect(result).toMatchObject({ status: 'posted', mode: 'live' });
     expect(JSON.parse(fs.readFileSync(path.join(tmpDir, 'progress-owned-tab.json'), 'utf8'))).toMatchObject({ stage: 'complete', submission_may_have_started: true });
     expect(browser.screenshot).toHaveBeenCalledOnce();
@@ -74,16 +74,16 @@ describe('person-post production flow', () => {
     expect(browser.evaluate.mock.calls.filter(([s]) => String(s).includes('button-not-found-or-disabled'))).toHaveLength(1);
   });
   it('preserves the live result when only tab cleanup fails', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page({ live: true });
     browser.closeTab.mockRejectedValue(new Error('bridge unavailable'));
-    const [result] = await personPost(browser, { ...kwargs(), confirm: true });
+    const [result] = await postPerson(browser, { ...kwargs(), confirm: true });
     expect(result).toMatchObject({ status: 'posted', tab_closed: false });
     expect(result.cleanup_warning).toMatch(/do not repeat/);
     expect(browser.closeTab).toHaveBeenCalledOnce();
   });
   it.each(['person', 'group'])('retains the %s task tab after checking its outcome when cleanup is deferred', async kind => {
-    const func = kind === 'person' ? (await import('../person-post.js')).personPost : (await import('../group-post.js')).groupPost;
+    const func = kind === 'person' ? (await import('../post-person.js')).postPerson : (await import('../post-group.js')).postGroup;
     const browser = page({ live: true, target: kind === 'group' ? { url: 'https://www.facebook.com/groups/test', hasHeading: true } : {} });
     const [result] = await func(browser, { ...kwargs(), 'group-url': 'https://www.facebook.com/groups/test', confirm: true, 'defer-close': true });
     expect(result).toMatchObject({ status: 'posted', task_tab: 'owned-tab', tab_closed: false, cleanup_deferred: true });
@@ -91,9 +91,9 @@ describe('person-post production flow', () => {
     expect(browser.closeTab).not.toHaveBeenCalled();
   });
   it('does not close existing tabs if task-tab creation fails', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page(); browser.newTab.mockRejectedValue(new Error('creation failed'));
-    await expect(personPost(browser, kwargs())).rejects.toThrow('creation failed');
+    await expect(postPerson(browser, kwargs())).rejects.toThrow('creation failed');
     expect(browser.closeTab).not.toHaveBeenCalled();
     expect(browser.goto).not.toHaveBeenCalled();
   });
@@ -103,33 +103,33 @@ describe('person-post production flow', () => {
     { url: 'https://example.com/test/' },
     { hasComposer: false },
   ])('refuses an unverified own personal profile %j', async target => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page({ target });
-    await expect(personPost(browser, kwargs())).rejects.toThrow(/personal profile/i);
+    await expect(postPerson(browser, kwargs())).rejects.toThrow(/personal profile/i);
     expect(browser.insertText).not.toHaveBeenCalled();
     expect(browser.closeTab).toHaveBeenCalledWith('owned-tab');
   });
   it('stops at login before filling the composer', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page({ security: { url: 'https://www.facebook.com/login/' } });
-    await expect(personPost(browser, kwargs())).rejects.toThrow();
+    await expect(postPerson(browser, kwargs())).rejects.toThrow();
     expect(browser.insertText).not.toHaveBeenCalled();
   });
   it('rejects conflicting confirmation flags before navigation', async () => {
-    const { personPost } = await import('../person-post.js');
+    const { postPerson } = await import('../post-person.js');
     const browser = page();
-    await expect(personPost(browser, { ...kwargs(), confirm: true, 'dry-run': true })).rejects.toThrow(/either/);
+    await expect(postPerson(browser, { ...kwargs(), confirm: true, 'dry-run': true })).rejects.toThrow(/either/);
     expect(browser.goto).not.toHaveBeenCalled();
     expect(browser.newTab).not.toHaveBeenCalled();
   });
   it('includes the new adapter in distributable packages', async () => {
     const { packageEntries } = await import('../scripts/package-local.js');
-    expect(packageEntries()).toContain('person-post.js');
+    expect(packageEntries()).toContain('post-person.js');
   });
   it.each(['person', 'group'])('prepares a paced %s dry-run through the shared production flow', async kind => {
     vi.useFakeTimers();
     try {
-      const func = kind === 'person' ? (await import('../person-post.js')).personPost : (await import('../group-post.js')).groupPost;
+      const func = kind === 'person' ? (await import('../post-person.js')).postPerson : (await import('../post-group.js')).postGroup;
       const browser = page({ target: kind === 'group' ? { url: 'https://www.facebook.com/groups/test', hasHeading: true } : {} });
       const pending = func(browser, { ...kwargs(), 'group-url': 'https://www.facebook.com/groups/test', slow: true });
       await vi.advanceTimersByTimeAsync(599);
@@ -143,9 +143,9 @@ describe('person-post production flow', () => {
   it('rechecks security after the review pause and stops a confirmed post at a checkpoint', async () => {
     vi.useFakeTimers();
     try {
-      const { personPost } = await import('../person-post.js');
+      const { postPerson } = await import('../post-person.js');
       const browser = page({ live: true, finalSecurity: { url: 'https://www.facebook.com/checkpoint/' } });
-      const pending = personPost(browser, { ...kwargs(), slow: true, confirm: true }).catch(error => error);
+      const pending = postPerson(browser, { ...kwargs(), slow: true, confirm: true }).catch(error => error);
       await vi.runAllTimersAsync();
       expect((await pending).message).toMatch(/checkpoint/i);
       expect(browser.evaluate.mock.calls.some(([script]) => String(script).includes('button-not-found-or-disabled'))).toBe(false);
@@ -188,4 +188,29 @@ describe('personal target verification', () => {
       await expect(verifyPersonalProfileLoaded(browser, '/me', { screenshotDir: tmpDir })).rejects.toThrow(/personal profile/);
     }
   });
+});
+
+it('uses owned-session cleanup for post-person after verifying the draft', async () => {
+  const {postPerson}=await import('../post-person.js');
+  const browser=page();
+  const close=vi.fn(async()=>{expect(process.env.OPENCLI_CLOSE_OWNED_TAB).toBe('1');});
+  browser.closeWindow=close;
+  const [result]=await postPerson(browser,kwargs());
+  expect(result.tab_closed).toBe(true);
+  expect(close).toHaveBeenCalledOnce();
+  expect(browser.closeTab).not.toHaveBeenCalled();
+  await browser.closeWindow();
+  expect(close).toHaveBeenCalledOnce();
+});
+
+it.each(['person','group'])('cleans up the %s session after navigation failure without replacing the original error', async kind => {
+  const {postPerson}=await import('../post-person.js');
+  const {postGroup}=await import('../post-group.js');
+  const browser=page();
+  const close=vi.fn();
+  browser.closeWindow=close;
+  browser.goto.mockRejectedValue(new Error('navigation failed'));
+  await expect((kind==='person'?postPerson:postGroup)(browser,{...kwargs(),'group-url':'https://www.facebook.com/groups/test'})).rejects.toThrow('navigation failed');
+  expect(close).toHaveBeenCalledOnce();
+  expect(browser.closeTab).not.toHaveBeenCalled();
 });
