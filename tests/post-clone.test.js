@@ -287,7 +287,7 @@ it('reads LinkedIn cards separately without promoting company filter links to pe
   globalThis.location={href:'https://www.linkedin.com/company/linkedin/posts/',pathname:'/company/linkedin/posts/'};
   globalThis.document={querySelector:()=>null,querySelectorAll:()=>[heading('one','First image',false),heading('two','Video',true)]};
   try {
-    const cards=readDocument('linkedin','cards');
+    const cards=await readDocument('linkedin','cards');
     expect(cards).toHaveLength(2);
     expect(cards[0]).toMatchObject({text:'First image',post_key:'one',permalink:null,has_video:false,media:[{url:'https://cdn.test/one',type:'image'}]});
     expect(cards[1].has_video).toBe(true);

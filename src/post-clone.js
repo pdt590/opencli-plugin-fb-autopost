@@ -14,7 +14,7 @@ export function parseSource(site, value, limit = 1) {
   const post = site === 'instagram' ? /\/(p|reel|tv)\/[^/]+/.test(url.pathname) : site === 'linkedin' ? /^(?:\/posts\/[^/]+-activity-\d+-[^/]+\/?|\/feed\/update\/urn:li:(?:activity|share|ugcPost):\d+\/?)$/.test(decodeURIComponent(url.pathname)) : /\/(posts|videos|reel)\/|\/(permalink|story|photo)\.php$/.test(url.pathname) || url.searchParams.has('fbid');
   url.hash = '';
   if (!post) {
-    if (site === 'linkedin' && !/^\/(in|company)\/[^/]+/.test(url.pathname)) throw new ArgumentError('Use a LinkedIn post, /in/user or /company/name URL');
+    if (site === 'linkedin' && !/^\/(in|company|showcase)\/[^/]+/.test(url.pathname)) throw new ArgumentError('Use a LinkedIn post, /in/user, /company/name or /showcase/name URL');
     if (site === 'instagram' && !/^\/[^/]+\/?$/.test(url.pathname)) throw new ArgumentError('Use an Instagram post or user URL');
     if (site === 'facebook' && (url.pathname === '/' || /^\/(groups|login|watch|search)(\/|$)/.test(url.pathname))) throw new ArgumentError('Use a Facebook post, user or fanpage URL');
   }
@@ -54,7 +54,7 @@ export async function readInstagram(shortcode) {
 }
 
 // Runs in the selected task tab. Selectors follow OpenCLI's bundled site readers.
-export function readDocument(site, mode) {
+export async function readDocument(site, mode) {
   if (/\/(login|checkpoint|challenge|accounts\/login)(\/|$)/.test(location.pathname) || document.querySelector('input[type="password"]')) throw new Error('Login or security challenge: sign in manually in this browser profile');
   if (site === 'facebook') {
     const messageSelector='[data-ad-preview="message"], [data-ad-comet-preview="message"], [data-ad-rendering-role="story_message"], [data-testid="post_message"], .userContent';
@@ -172,7 +172,8 @@ export function readDocument(site, mode) {
           if (body?.innerText!==before && !more()) break;
         }
       }
-      let text=structuredText || body?.innerText?.trim() || '';
+      const visibleText=body?.innerText?.trim() || '';
+      let text=visibleText.length>structuredText.length && !more() ? visibleText : structuredText || visibleText;
       if ([...(body?.querySelectorAll('[role="button"], button') || [])].some(b=>/^(see less|ẩn bớt)$/i.test(b.innerText.trim()))) text=text.replace(/\s*(see less|ẩn bớt)$/i,'');
       const media=[...structuredMedia];
       const mediaRoot=root===sidebar ? main : root;
@@ -192,14 +193,36 @@ export function readDocument(site, mode) {
     })();
   }
   const isPost = href => site === 'instagram' ? /\/(p|reel|tv)\/[^/]+/.test(href) : site === 'linkedin' ? /^(?:\/posts\/[^/]+-activity-\d+-[^/]+\/?|\/feed\/update\/urn:li:(?:activity|share|ugcPost):\d+\/?)$/.test(decodeURIComponent(new URL(href).pathname)) : /\/(posts|videos|reel)\/|\/(permalink|story|photo)\.php|[?&]fbid=/.test(href);
+  const linkedinCaption=async root=>{
+    const selector='.update-components-text, .feed-shared-update-v2__description, [data-testid="expandable-text-box"]';
+    const body=()=>root?.querySelector(selector);
+    const label=el=>(el.innerText || el.getAttribute?.('aria-label') || '').trim();
+    const isMore=el=>/^(?:(?:…|\.{3})\s*)?(?:see more|more|xem thêm)$/i.test(label(el));
+    const controls=()=>[...(body()?.querySelectorAll?.('button, [role="button"], .inline-show-more-text__button, .see-more') || []),
+      ...(root?.querySelectorAll('button.see-more, button.inline-show-more-text__button, [data-testid="expandable-text-button"]') || [])];
+    const more=()=>controls().find(isMore);
+    const button=more();
+    if (button) {
+      button.click();
+      for (let attempt=0;attempt<25;attempt++) {
+        await new Promise(resolve=>setTimeout(resolve,100));
+        if (!more()) break;
+      }
+    }
+    let text=body()?.innerText?.trim() || '';
+    const truncated=!!more() || /(?:…|\.{3})\s*(?:more|see more|xem thêm)\s*$/i.test(text);
+    if (controls().some(el=>/^(?:(?:…|\.{3})\s*)?(?:less|see less|ẩn bớt)$/i.test(label(el)))) text=text.replace(/\s*(?:(?:…|\.{3})\s*)?(?:see less|less|ẩn bớt)$/i,'').trim();
+    return {text,warnings:truncated?['LinkedIn caption is still truncated after expanding More.']:[]};
+  };
   if(site==='linkedin' && mode==='cards') {
-    return [...document.querySelectorAll('h2')].filter(h=>h.textContent.trim()==='Feed post').map(h=>{
+    return (await Promise.all([...document.querySelectorAll('h2')].filter(h=>h.textContent.trim()==='Feed post').map(async h=>{
       const root=h.closest('[componentkey]');
       if(!root) return null;
       const permalink=[...root.querySelectorAll('a[href]')].map(a=>a.href).find(isPost);
       const media=[...root.querySelectorAll('img')].filter(img=>img.naturalWidth>200 && img.naturalHeight>150 && !/company-logo|profile-displayphoto/.test(img.src)).map(img=>({type:'image',url:img.currentSrc || img.src}));
-      return {url:permalink || location.href,permalink:permalink || null,post_key:root.getAttribute('componentkey'),text:root.querySelector('[data-testid="expandable-text-box"]')?.innerText || '',has_video:!!root.querySelector('video,[data-vjs-player]'),media,published_at:root.querySelector('time[datetime]')?.dateTime || null,warnings:permalink?[]:['Post extracted from an individual feed card; LinkedIn did not expose its permalink. Source URL points to the company feed.']};
-    }).filter(Boolean);
+      const caption=await linkedinCaption(root);
+      return {url:permalink || location.href,permalink:permalink || null,post_key:root.getAttribute('componentkey'),text:caption.text,has_video:!!root.querySelector('video,[data-vjs-player]'),media,published_at:root.querySelector('time[datetime]')?.dateTime || null,warnings:[...caption.warnings,...(permalink?[]:['Post extracted from an individual feed card; LinkedIn did not expose its permalink. Source URL points to the company feed.'])]};
+    }))).filter(Boolean);
   }
   if (mode === 'links') return [...new Set([...document.querySelectorAll('a[href]')].map(a=>a.href).filter(href=>{try {const url=new URL(href); return (url.hostname===site+'.com' || url.hostname.endsWith('.'+site+'.com')) && !/\/(reels?|videos?|watch|tv)(\/|$)/i.test(url.pathname) && isPost(href);} catch {return false;}}))];
   const roots = site === 'linkedin' ? '.feed-shared-update-v2, .update-components-update-v2' : site === 'instagram' ? 'article' : '[role="article"]';
@@ -207,14 +230,15 @@ export function readDocument(site, mode) {
   if(site==='linkedin' && mode==='post' && !root) throw new Error('No individual LinkedIn post card found; refusing to extract the whole page');
   const meta = name => document.querySelector(`meta[property="${name}"]`)?.content || '';
   const body = root?.querySelector(site === 'linkedin' ? '.update-components-text, .feed-shared-update-v2__description, [data-testid="expandable-text-box"]' : site === 'facebook' ? '[data-ad-preview="message"], [data-ad-comet-preview="message"]' : 'h1');
-  const text = body?.innerText || meta('og:description');
+  const caption=site==='linkedin'?await linkedinCaption(root):null;
+  const text = caption?.text || body?.innerText || meta('og:description');
   const media=[];
   const add=(url,type)=>{if(url && !media.some(m=>m.url===url)) media.push({url,type});};
   for(const img of root?.querySelectorAll('img') || []) if(img.naturalWidth > 200 && img.naturalHeight > 150) add(img.currentSrc || img.src,'image');
   for(const video of root?.querySelectorAll('video') || []) add(video.currentSrc || video.querySelector('source')?.src || video.src,'video');
   if(!media.length) add(meta('og:image'),'image');
   add(meta('og:video') || meta('og:video:url'),'video');
-  return {url:location.href, text, has_video:!!root?.querySelector('video') || !!meta('og:video') || !!meta('og:video:url'), author:meta('article:author'), published_at:document.querySelector('time[datetime]')?.dateTime || meta('article:published_time') || null, media, warnings:['Only images exposed by the loaded page are available; unloaded carousel images may be incomplete.']};
+  return {url:location.href, text, has_video:!!root?.querySelector('video') || !!meta('og:video') || !!meta('og:video:url'), author:meta('article:author'), published_at:document.querySelector('time[datetime]')?.dateTime || meta('article:published_time') || null, media, warnings:[...(caption?.warnings || []),'Only images exposed by the loaded page are available; unloaded carousel images may be incomplete.']};
 }
 
 export async function fetchMedia(url) {

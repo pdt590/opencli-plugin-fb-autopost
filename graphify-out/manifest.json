@@ -270,15 +270,15 @@
     "semantic_hash": ""
   },
   "src/post-clone.js": {
-    "mtime": 1792739409.1206412,
-    "seen": 1792739425.5337486,
-    "ast_hash": "203c4f037631063f3261f0fd89fbe50e",
+    "mtime": 1792743203.7553473,
+    "seen": 1792743485.402926,
+    "ast_hash": "82d02cd87256a9668268c3113b2c2ca4",
     "semantic_hash": ""
   },
   "tests/post-clone.test.js": {
-    "mtime": 1792739395.2862175,
-    "seen": 1792739425.533768,
-    "ast_hash": "9d7a369c0c368386ed978176b3296c67",
+    "mtime": 1792743075.0692089,
+    "seen": 1792743485.4029508,
+    "ast_hash": "8668c05220fbbc264fcb203e66ed2c29",
     "semantic_hash": ""
   },
   "tests/post-group.test.js": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "tests/facebook-reader.test.js": {
-    "mtime": 1792731726.8228185,
-    "seen": 1792732101.3151808,
-    "ast_hash": "8d9af9086d4527bb09a0e31da148ab70",
+    "mtime": 1792743398.2820437,
+    "seen": 1792743485.4029446,
+    "ast_hash": "18cebe2b6ef91c4ef29ee293f2a3d5a9",
     "semantic_hash": ""
   },
   "scripts/patch-opencli.js": {
@@ -315,6 +315,12 @@
     "mtime": 1792740642.6164258,
     "seen": 1792740690.136055,
     "ast_hash": "c486e308cc8c3507cc67c7d1d1fcef93",
+    "semantic_hash": ""
+  },
+  "tests/caption-expansion.test.js": {
+    "mtime": 1792743430.0312133,
+    "seen": 1792743485.4029422,
+    "ast_hash": "dfb687740e39da1a86f7db7002dea016",
     "semantic_hash": ""
   }
 }

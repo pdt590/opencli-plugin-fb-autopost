@@ -69,6 +69,21 @@ it('reads a short photo caption without requiring a line break or See more', asy
   expect(await readDocument('facebook','post')).toMatchObject({text:'Short caption'});
 });
 
+it('keeps expanded Facebook text when structured data contains a shorter preview',async()=>{
+  const body=element({text:'Opening… See more',attrs:{'data-ad-preview':'message'}});
+  const button=element({text:'See more',attrs:{role:'button'}});
+  button.click=()=>{
+    body.innerText='Opening\nComplete caption ending';
+    body.children.splice(0);
+  };
+  body.children.push(button);
+  page([
+    element({attrs:{role:'article'},children:[link('https://www.facebook.com/author/posts/200'),body]}),
+    element({tag:'script',attrs:{type:'application/json'},text:JSON.stringify({post_id:'200',message:{text:'Opening…'}})}),
+  ],'https://www.facebook.com/author/posts/200');
+  expect(await readDocument('facebook','post')).toMatchObject({text:'Opening\nComplete caption ending'});
+});
+
 it('fails closed instead of downloading a profile main image as post content', async()=>{
   page([element({attrs:{role:'main'},children:[element({image:true,attrs:{src:'https://cdn.test/avatar.jpg'}})]})],
     'https://www.facebook.com/handsonai/posts/missing');
