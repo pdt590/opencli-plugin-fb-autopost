@@ -49,6 +49,9 @@ describe('person-post production flow', () => {
     expect(browser.evaluate.mock.calls.some(([s]) => String(s).includes('button-not-found-or-disabled'))).toBe(false);
     const { cli } = await import('@jackwener/opencli/registry');
     expect(cli).toHaveBeenCalledWith(expect.objectContaining({ site: 'facebook', name: 'person-post', access: 'write', browser: true }));
+    expect(cli.mock.calls.find(([cmd]) => cmd.name === 'person-post')[0].args).toContainEqual(expect.objectContaining({ name: 'timeout', default: 600 }));
+    const progress = JSON.parse(fs.readFileSync(path.join(tmpDir, 'progress-owned-tab.json'), 'utf8'));
+    expect(progress).toMatchObject({ stage: 'dry-run-ready', submission_may_have_started: false });
   });
   it('attaches local images and rechecks caption before returning dry-run', async () => {
     const { personPost } = await import('../person-post.js');
@@ -65,6 +68,7 @@ describe('person-post production flow', () => {
     const browser = page({ live: true });
     const [result] = await personPost(browser, { ...kwargs(), confirm: true });
     expect(result).toMatchObject({ status: 'posted', mode: 'live' });
+    expect(JSON.parse(fs.readFileSync(path.join(tmpDir, 'progress-owned-tab.json'), 'utf8'))).toMatchObject({ stage: 'complete', submission_may_have_started: true });
     expect(browser.screenshot).toHaveBeenCalledOnce();
     expect(browser.screenshot.mock.invocationCallOrder[0]).toBeLessThan(browser.closeTab.mock.invocationCallOrder[0]);
     expect(browser.evaluate.mock.calls.filter(([s]) => String(s).includes('button-not-found-or-disabled'))).toHaveLength(1);

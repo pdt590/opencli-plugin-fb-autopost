@@ -18,6 +18,7 @@ cli({
   domain: 'www.facebook.com', strategy: Strategy.UI, browser: true,
   defaultWindowMode: 'foreground', defaultFormat: 'json',
   args: [
+    { name: 'timeout', type: 'int', default: 600, help: 'Total command budget in seconds for slow caption input, image upload and outcome verification' },
     { name: 'defer-close', type: 'boolean', default: false, help: 'Keep task tab after outcome checks; use with --site-session persistent for later cleanup' },
     { name: 'slow', type: 'boolean', default: false, help: 'Paced caption input and review pauses; no detection guarantees' },
     { name: 'caption', type: 'string', help: 'Caption text (exclusive with --caption-file)' },

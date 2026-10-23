@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { CommandExecutionError } from '@jackwener/opencli/errors';
 import { ensureArtifactDir, captureScreenshot } from './artifacts.js';
 import { assertSafePage } from './auth-detection.js';
@@ -27,6 +29,8 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
   if (![page.newTab, page.selectTab, page.closeTab].every(fn => typeof fn === 'function')) {
     throw new CommandExecutionError('OpenCLI 2.x tab lifecycle support is required. Update OpenCLI before posting.');
   }
+  let stage = 'create-tab';
+  let progressFile;
   let ownedTab;
   let rows;
   let failure;
@@ -35,9 +39,18 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
     ownedTab = await page.newTab();
     if (typeof ownedTab !== 'string' || !ownedTab) throw new CommandExecutionError('OpenCLI did not return the task tab identity');
     await page.selectTab(ownedTab);
-    rows = await preparePost(page, input, timing, verifyTarget, resultTarget);
+    progressFile = path.join(input.screenshotDir, `progress-${ownedTab.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`);
+    const reportProgress = next => {
+      stage = next;
+      fs.writeFileSync(progressFile, JSON.stringify({ task_tab: ownedTab, stage, mode: input.mode,
+        target_url: input.targetUrl, updated_at: new Date().toISOString(),
+        submission_may_have_started: ['submit-attempt', 'verify-outcome', 'complete'].includes(stage) && input.mode === 'live',
+      }, null, 2));
+    };
+    rows = await preparePost(page, input, timing, verifyTarget, resultTarget, reportProgress);
   } catch (error) {
     failure = error;
+    failure.message += ` Stage: ${stage}.${progressFile ? ` Progress: ${progressFile}.` : ''}`;
     if (ownedTab) {
       try {
         const screenshot = await captureScreenshot(page, input.screenshotDir, 'task-error');
@@ -58,7 +71,8 @@ export async function runPost(first, second, { resolveInput, verifyTarget, comma
   return rows.map(row => ({ ...row, tab_closed: !deferClose && !cleanupError, ...(deferClose ? { task_tab: ownedTab, cleanup_deferred: true } : {}), ...(cleanupError ? { cleanup_warning: cleanupError } : {}) }));
 }
 
-async function preparePost(page, input, timing, verifyTarget, resultTarget) {
+async function preparePost(page, input, timing, verifyTarget, resultTarget, reportProgress) {
+  reportProgress('navigate');
   await page.goto(input.targetUrl, { waitUntil: 'load', settleMs: 3000 });
   await assertSafePage(page, {
     screenshotDir: input.screenshotDir,
@@ -69,12 +83,14 @@ async function preparePost(page, input, timing, verifyTarget, resultTarget) {
   });
   const resultUrl = resultTarget === 'profileUrl' ? target.url : input.targetUrl;
 
+  reportProgress('open-composer');
   await openComposer(page, {
     screenshotDir: input.screenshotDir,
     timeoutMs: timing.openComposerTimeoutMs,
     intervalMs: timing.openComposerIntervalMs,
   });
   if (input.slow) await delay(600);
+  reportProgress('insert-caption');
   await insertCaption(page, input.caption, {
     slow: input.slow,
     screenshotDir: input.screenshotDir,
@@ -83,6 +99,7 @@ async function preparePost(page, input, timing, verifyTarget, resultTarget) {
   });
 
   if (input.images.length) {
+    reportProgress('attach-images');
     await attachImages(page, input.images, {
       screenshotDir: input.screenshotDir,
       timeoutMs: timing.imageTimeoutMs,
@@ -109,6 +126,7 @@ async function preparePost(page, input, timing, verifyTarget, resultTarget) {
   });
 
   if (input.mode === 'dry-run') {
+    reportProgress('dry-run-ready');
     return [
       buildResult({
         status: 'dry-run-ready',
@@ -122,15 +140,18 @@ async function preparePost(page, input, timing, verifyTarget, resultTarget) {
     ];
   }
 
+  reportProgress('submit-attempt');
   await clickPostButton(page, {
     screenshotDir: input.screenshotDir,
     caption: input.caption,
   });
+  reportProgress('verify-outcome');
   const outcome = await pollPostOutcome(page, {
     timeoutMs: timing.postOutcomeTimeoutMs,
     intervalMs: timing.postOutcomeIntervalMs,
   });
   const screenshot = await captureScreenshot(page, input.screenshotDir, 'post');
+  reportProgress('complete');
 
   return [
     buildResult({

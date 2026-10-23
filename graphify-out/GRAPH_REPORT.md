@@ -1,12 +1,12 @@
-# Graph Report - opencli-plugin-fb-autopost  (2026-10-22)
+# Graph Report - opencli-plugin-fb-autopost  (2026-10-23)
 
 ## Corpus Check
-- 49 files · ~23,401 words
+- 49 files · ~23,849 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 3, .example 2)
 
 ## Summary
-- 273 nodes · 623 edges · 11 communities (8 shown, 3 thin omitted)
+- 273 nodes · 625 edges · 11 communities (8 shown, 3 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.89)
 - Token cost: 0 input · 0 output
 
@@ -95,13 +95,13 @@ Nodes (10): personPost(), @jackwener/opencli, vitest, assertSafePage(), classify
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `person-post.test.js` to `validate.js`, `post-flow.js`, `posting-worker.js`, `doctor.js`, `package.json`, `package-local.js`?**
-  _High betweenness centrality (0.157) - this node is a cross-community bridge._
+  _High betweenness centrality (0.154) - this node is a cross-community bridge._
 - **What connects `Hermes messaging control layer`, `OpenCLI plugin and Browser Bridge`, `Redacted reproducible bug reports` to the rest of the system?**
   _5 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `post-flow.js` be split into smaller, more focused modules?**
   _Cohesion score 0.1254355400696864 - nodes in this community are weakly interconnected._
 - **Why does `@jackwener/opencli` connect `person-post.test.js` to `validate.js`, `post-flow.js`, `package.json`?**
-  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+  _High betweenness centrality (0.072) - this node is a cross-community bridge._
 - **Should `posting-worker.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08295625942684766 - nodes in this community are weakly interconnected._
 - **Should `doctor.js` be split into smaller, more focused modules?**

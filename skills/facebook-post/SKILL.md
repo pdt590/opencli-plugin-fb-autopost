@@ -35,73 +35,42 @@ npx skills add pdt590/opencli-plugin-fb-autopost --skill facebook-post -a hermes
 This installs to the user's Hermes skill directory. It does not install OpenCLI,
 Browser Bridge or the Facebook plugin. Those are separate prerequisites.
 
-## Start Chrome automatically on Windows or Linux
+## Reuse Chrome on Windows and Linux; never auto-launch
 
-Before asking the user to open the browser, run `opencli profile list`. If a profile
-is already connected (including a supported browser other than Chrome), continue with
-profile selection below without launching another browser.
+Run `opencli profile list` before browser actions and reuse the selected connected
+browser context, including a supported browser other than Chrome. Never start Chrome
+implicitly during a posting request, on either Windows or Linux.
 
-If Chrome is already running, reuse that browser process and its authenticated
-profile. Do not start a second Chrome process, window, isolated automation browser,
-incognito session or temporary user-data directory. A disconnected Bridge is not a
-reason to start Chrome again: ask the user to enable/reconnect Bridge in that browser.
-Only launch Chrome when no Chrome process is running.
+Do not execute `Start-Process chrome`, `chrome.exe`, `google-chrome`, `chromium`,
+launch scripts, Playwright browser launchers or equivalent startup commands. Do not
+create another browser process, profile, incognito session or temporary user-data
+directory. Process discovery can miss Chrome across desktop users, Windows services,
+RDP, SSH, systemd and containers. "No process found" or a missing display environment
+does not prove the user's Chrome is closed and never authorizes a browser launch.
 
-### Windows (PowerShell)
+1. One connected context: reuse it with default routing and record its identity.
+2. Multiple connected contexts: use the user's existing choice or ask which to use.
+   Never launch a browser to resolve ambiguity.
+3. No connected context: stop before posting and ask the user to enable/reconnect
+   Browser Bridge in their existing Chrome, on the same machine and desktop user as
+   OpenCLI. Do not restart Chrome or switch profiles automatically.
+4. If Chrome is actually closed, ask the user to open it manually on their desktop.
+   Starting Chrome requires a separate explicit request; it is not part of posting.
 
-```powershell
-$chromeProcesses = @(Get-Process -Name chrome -ErrorAction SilentlyContinue)
-if ($chromeProcesses.Count -eq 0) {
-  $chromeCandidates = @(
-    "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
-    "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe",
-    "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
-  )
-  $chromePath = $chromeCandidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
-  if (-not $chromePath) { throw 'Chrome executable not found. Ask for its installed path.' }
-  Start-Process -FilePath $chromePath -ArgumentList 'https://www.facebook.com/'
-}
-```
+After the user reconnects Bridge, poll `opencli profile list` every two seconds for
+up to 30 seconds. Continue only after connection is verified; otherwise stop and
+report the connection failure. Do not kill Chrome, install extensions or bypass login.
+On Linux do not invent `DISPLAY=:0`, start Xvfb, enable headless mode or disable the
+sandbox. On Windows do not launch Chrome under another user or service account.
 
-### Linux (Bash)
-
-```bash
-if ! command -v pgrep >/dev/null 2>&1; then
-  echo 'Cannot check existing Chrome processes. Resolve this before launching Chrome.' >&2
-  exit 1
-fi
-if ! pgrep -u "$(id -u)" -f '(^|/)(chrome|google-chrome|google-chrome-stable)( |$)' >/dev/null; then
-  if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
-    echo 'No graphical desktop session. Use the desktop session running Chrome.' >&2
-    exit 1
-  fi
-  chrome_bin="$(command -v google-chrome || command -v google-chrome-stable || true)"
-  if [ -z "$chrome_bin" ]; then
-    echo 'Chrome executable not found. Ask for its installed path.' >&2
-    exit 1
-  fi
-  chrome_log="$(mktemp "${TMPDIR:-/tmp}/facebook-post-chrome.XXXXXX.log")"
-  nohup "$chrome_bin" 'https://www.facebook.com/' >"$chrome_log" 2>&1 < /dev/null &
-fi
-```
-
-Run as the current desktop user with their normal browser data. Never use `sudo`,
-headless mode, `--user-data-dir` or sandbox-disabling options. Existing background
-Chrome processes also count as running: reconnect Bridge instead of launching again.
-
-### Wait for Browser Bridge, then select the profile
-
-After startup, poll `opencli profile list` every two seconds for up to 30 seconds.
-Proceed only when it reports a connected profile, then apply the single/multiple-profile
-rules below. A process starting successfully is not evidence that Browser Bridge is ready
-or Facebook is logged in.
-
-If no profile connects within that time, whether Chrome was already open or newly
-launched, stop and ask the user to enable Browser Bridge in the intended profile.
-If startup fails, report the actual
-error (and inspect the Linux startup log when available). Do not repeatedly relaunch,
-kill existing Chrome processes, install a browser/extension, or bypass login automatically.
-Keep Chrome open for reuse. Only posting task tabs may be closed during final cleanup.
+Distinguish a Chrome process/profile from an OpenCLI automation window. The plugin's
+`page.newTab()` is managed by Browser Bridge; `--site-session persistent` reuses the
+Facebook adapter session but does not guarantee reuse of the user's existing window.
+This limitation applies to both Windows and Linux. If the user forbids a new window,
+stop before invoking a posting adapter until the installed Bridge supports creating
+its managed tab in that existing window. Do not claim persistent mode guarantees it,
+or move, bind or navigate unrelated user tabs implicitly. Keep the browser open;
+only posting task tabs may be closed during final cleanup.
 
 ## Collect the post and automatically detect images
 
@@ -129,15 +98,33 @@ Run `opencli profile list` before browser actions:
   discovered context ID as task metadata without adding the flag.
 - Multiple connected profiles: ask for a choice unless the user already selected one.
   Include `--profile <chosen>` before `facebook`.
-- None connected: follow the automatic Chrome startup procedure above once; stop if
-  Browser Bridge does not connect within the timeout. If discovery itself fails,
-  diagnose OpenCLI before attempting a post.
+- None connected: stop and request reconnection of the existing browser on both
+  Windows and Linux. Do not launch Chrome. If discovery fails, diagnose OpenCLI
+  before attempting a post.
 
 Never guess a context ID. Personal posting navigates to `/me` and verifies owner controls.
 Use the personal Facebook identity selected in that profile, not a Page or another
 person's URL. Check the returned `profile_url` against the intended destination.
 
 ## Always use slow input
+
+Posting commands now default to a 600-second total timeout, replacing OpenCLI's
+60-second fallback. Explicitly pass `--timeout 600` in posting invocations. The tool
+runner must allow at least 630 seconds and poll a running process rather than killing
+it after 60 seconds. For very long captions, budget more time before starting: slow
+input performs browser calls per 12 graphemes, then uploads images and verifies the
+outcome. Never disable slow input to fit a short tool deadline.
+
+Each task writes `progress-<task_tab>.json` in its artifact directory, recording the
+current stage without storing caption text. On timeout, read this file and inspect
+the retained tab. `insert-caption` or `attach-images` means the last recorded stage
+was preparation; it is not evidence of a published post. `submit-attempt` or later
+means submission may have started. A timeout does not cancel OpenCLI's running
+adapter: it can continue executing. Wait for that process to finish before inspecting,
+closing or editing the composer. Do not start another posting command, press Post
+manually, or infer non-publication from a still-open composer while it is running.
+If the process is unavailable or its state cannot be established, report unknown and
+require manual inspection; never retry publication automatically.
 
 Every posting invocation must include `--slow true`, for both personal profiles and groups,
 including any explicitly requested dry-run. Do not omit it, pass false or fall back to fast

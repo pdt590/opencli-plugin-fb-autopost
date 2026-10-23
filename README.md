@@ -198,6 +198,10 @@ Trước khi đóng tab, plugin chờ tối đa 30 giây để nhận diện k�
 
 ## Kiểm tra, đóng gói và phát triển
 
+Trên cả Windows và Linux, skill chỉ tái sử dụng Chrome đã kết nối Browser Bridge, không tự chạy lệnh mở Chrome. Không thấy tiến trình trong service, RDP, SSH hoặc container không chứng minh Chrome trên desktop đã đóng. Nếu mất kết nối, skill dừng và yêu cầu kết nối lại trình duyệt đang dùng; nếu Chrome đã đóng, người dùng mở thủ công. Lưu ý: cửa sổ tự động hóa do OpenCLI/Bridge quản lý khác với tiến trình Chrome; persistent session không bảo đảm dùng đúng cửa sổ người dùng đang mở. Nếu yêu cầu tuyệt đối không tạo cửa sổ mới, skill dừng trước lệnh đăng khi Bridge chưa hỗ trợ điều đó trên cả hai hệ điều hành.
+
+Lệnh đăng bài mặc định có timeout tổng 600 giây; có thể truyền `--timeout 600` hoặc tăng trước khi chạy caption dài. Công cụ gọi lệnh cần cho phép ít nhất 630 giây và tiếp tục chờ tiến trình, không ngắt sau 60 giây. Nhập chậm, tải ảnh và xác minh kết quả đều nằm trong thời gian này. Mỗi tab có file `progress-<task_tab>.json` trong thư mục artifacts để phân biệt bước chuẩn bị và bước đã bắt đầu gửi. Nếu timeout, tiến trình OpenCLI có thể vẫn chạy: chờ nó kết thúc trước khi thao tác tab, không tự retry hoặc bấm Đăng lần nữa.
+
 ```sh
 npm test
 npm run doctor
